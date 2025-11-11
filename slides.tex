@@ -1,0 +1,98 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage{silence}
+\WarningFilter{hyperref}{Option `driverfallback' has already been used}
+\PassOptionsToPackage{unicode,CJKbookmarks}{hyperref}
+\usepackage[UTF8]{ctex}      % 中文支持
+
+% 主题
+% https://mpetroff.net/files/beamer-theme-matrix/
+\usetheme{JuanLesPins}       % 主题
+\usecolortheme{whale}        % 颜色主题 beaver dolphin whale
+
+% 代码高亮
+\usepackage{xcolor}
+\usepackage{listings}        % 简单代码渲染
+\lstset{
+  basicstyle=\ttfamily\small,
+  numbers=none,
+  breaklines=true,
+  showstringspaces=false,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red}
+}
+
+% 信息
+\title{Matlab与简单数学模型}
+\author{何劭弘 Vanilla\_Yukirin}
+\institute{CJLU 2023 大数据}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{目录}
+  \tableofcontents
+\end{frame}
+
+\section{问题背景}
+\begin{frame}{研究问题}
+  给定序列 $a_1,\dots,a_n$，求连续子段最大和（Maximum Subarray）。
+\end{frame}
+
+\section{算法}
+\begin{frame}{Kadane 算法}
+  递推：$dp[i]=\max(a_i, dp[i-1]+a_i)$，答案为 $\max_i dp[i]$。
+\end{frame}
+
+\begin{frame}[fragile]{示例代码（Python）}
+\begin{lstlisting}[language=Python]
+def max_subarray(a):
+    best = cur = a[0]
+    for x in a[1:]:
+        cur = max(x, cur + x)
+        best = max(best, cur)
+    return best
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{示例代码（Matlab）}
+\begin{lstlisting}[language=Matlab]
+function ans = max_subarray(a)
+    best = a(1);
+    cur = a(1);
+    for i = 2:length(a)
+        cur = max(a(i), cur + a(i));
+        best = max(best, cur);
+    end
+    ans = best;
+end
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{结论}
+  Kadane 算法：时间 $O(n)$，空间 $O(1)$。
+\end{frame}
+
+% 新增：行内等宽（不需要 fragile）
+\begin{frame}{行内等宽：\texttt{...}}
+这里演示行内等宽：\texttt{for i = 1:n}，适合短的、简单的代码或变量名。
+\end{frame}
+
+% 新增：listings 的行内（颜色来自 lstset）
+\begin{frame}[fragile]{使用 \lstinline|...|}
+演示 listings 行内：\lstinline|disp('hello')|，适合需要 listings 语法高亮的短代码片段。
+\end{frame}
+
+% 新增：单行短代码块（verbatim）
+\begin{frame}[fragile]{单行短代码块（verbatim）}
+单行或几行的简短代码可以用 verbatim 环境：
+\begin{verbatim}
+x = 1; y = x^2; disp(y)
+\end{verbatim}
+\end{frame}
+
+\end{document}

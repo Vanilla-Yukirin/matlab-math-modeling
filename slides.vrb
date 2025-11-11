@@ -1,0 +1,5 @@
+\frametitle{单行短代码块（verbatim）}
+单行或几行的简短代码可以用 verbatim 环境：
+\begin{verbatim}
+x = 1; y = x^2; disp(y)
+\end{verbatim}

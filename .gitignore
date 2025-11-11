@@ -16,6 +16,7 @@
 *.blg
 *.nav
 *.snm
+*。vrb
 
 ## 临时目录
 latex.out/
