@@ -1,0 +1,36 @@
+# ========================
+# TeX / LaTeX / Beamer
+# ========================
+
+## 生成的中间文件
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.nav
+*.snm
+
+## 临时目录
+latex.out/
+_build/
+tmp/
+__latexindent_temp.tex
+
+## 输出pdf
+# *.pdf
+
+## 编辑器和系统文件
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+
+# VS Code
+.vscode/
