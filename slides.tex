@@ -46,15 +46,25 @@
   texcl=false                     % 把%后当LaTeX
 }
 \lstdefinestyle{matCN}{
-  basicstyle=\ttfamily\scriptsize,
+  basicstyle=\ttfamily\scriptsize, % 小一点的字体
+  aboveskip=0.3ex,
+  belowskip=0.3ex,
   language=Matlab,
   texcl=true,         % 只在 Matlab 开
-  morecomment=[l]\%,  % Matlab 单行注释（可保留也可省略）
+  morecomment=[l]\%,  % Matlab 单行注释
 }
 
 % 支持 utf8 的 listings
 \usepackage{listingsutf8}
 \lstset{inputencoding=utf8}
+
+% 添加代码块标题
+\DeclareRobustCommand{\codeinfo}[1]{%
+  \nointerlineskip
+  {\raggedright\color{gray}\tiny \textbf{文件：}\nolinkurl{#1}}
+}
+
+
 
 % 信息
 \title{Matlab与简单数学模型}
@@ -231,13 +241,14 @@ ans =
 \begin{frame}[fragile]{运行代码}
   新建 \texttt{HelloWorld.m} 文件，写入如下内容，然后用编辑器的运行按钮或命令行运行。
 
-\begin{lstlisting}[style=matCN]
+  \codeinfo{HelloWorld.m}
+  \begin{lstlisting}[style=matCN]
 clc; % clear console
 clear; % clear variables
 n=input("Please input a number: ");
 n
 fprintf("Hello, World!\n")
-\end{lstlisting}
+  \end{lstlisting}
 
   常见运行方式：
   \begin{enumerate}
@@ -275,19 +286,20 @@ fprintf("Hello, World!\n")
 
 \begin{frame}[fragile]{从矩阵开始}
   Matlab 的名字是“矩阵实验室”，内部数据以矩阵为主，直接面向矩阵进行运算。
+  
+  \codeinfo{Section2_1_matrix.m}
   \begin{lstlisting}[style=matCN]
 clc;clear; % 清空控制台和变量
+
 A=[1,2,3;4,5,6;7,8,9] % 创建矩阵A，是一个3行3列的矩阵
 % [] 表示构建一个矩阵
 % 逗号或空格用来分隔同一行不同列的元素
 % 分号用来分隔不同行（同一列）的元素，或者说表示换行
-
 A(1:2,:) % 拆：取A的前两行
 % 矩阵后面连着一个括号，代表取矩阵的某个部分
 % 第一个参数 1:2 表示“从1到2”，即第1行和第2行
 % 第二个参数 : 表示“所有”
 % 所以这里取的是A的前两行，所有列
-
 B=[A;10,11,12] % 添：在A的下面添加一行新数据，构成新矩阵B
 % 把新行 [10 11 12] 用分号和A连接，表示把新行添加到A的下面
   \end{lstlisting}
@@ -299,11 +311,14 @@ B=[A;10,11,12] % 添：在A的下面添加一行新数据，构成新矩阵B
 
   \texttt{\scriptsize同理，标量可以看作是1行1列的矩阵。这也是为什么Matlab中万物皆矩阵}
 
+  \codeinfo{Section2_2_vector.m}
   \begin{lstlisting}[style=matCN]
 clc;clear
-x = [1 2 3 4 5]        % 一行五列 → 行向量
-y = [1; 2; 3; 4; 5]    % 五行一列 → 列向量
-c=1:1:10; % 创建一个从1到10的向量
+x = [1 2 3 4 5]          % 一行五列 → 行向量
+y = [1; 2; 3; 4; 5]      % 五行一列 → 列向量
+a = [1,2,3,4,5,6,7,8,9]; % 手写会很累
+b = 1:1:10;              % 从1开始，步长1，到10结束 → [1 2 3 4 5 6 7 8 9 10]
+
   \end{lstlisting}
 
 
