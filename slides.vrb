@@ -1,5 +1,2 @@
-\frametitle{单行短代码块（verbatim）}
-单行或几行的简短代码可以用 verbatim 环境：
-\begin{verbatim}
-x = 1; y = x^2; disp(y)
-\end{verbatim}
+\frametitle{使用 \lstinline |...|}
+演示 listings 行内：\lstinline|disp('hello')|，适合需要 listings 语法高亮的短代码片段。

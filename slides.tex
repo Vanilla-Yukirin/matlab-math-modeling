@@ -4,9 +4,20 @@
 \PassOptionsToPackage{unicode,CJKbookmarks}{hyperref}
 \usepackage[UTF8]{ctex}      % 中文支持
 
+% 字体与编码：确保无衬线有真正的 italic 形状，消除 OT1/cmss/... 告警 ——
+\usepackage[T1]{fontenc}            % 西文字体用 T1 编码
+\usepackage[default,scale=0.95]{sourcesanspro} % 无衬线换为 Source Sans Pro（含 italic）
+% \usepackage[default]{FiraSans}     % 备选：Fira Sans
+
+% 可选：数学直立体用无衬线风格
+\usefonttheme{professionalfonts}
+% \usepackage{newtxsf}               % 若想数学也更贴近无衬线，可考虑 newtxsf 等；按需启用
+
+
+
 % 主题
 % https://mpetroff.net/files/beamer-theme-matrix/
-\usetheme{JuanLesPins}       % 主题
+\usetheme{Ilmenau}       % 主题
 \usecolortheme{whale}        % 颜色主题 beaver dolphin whale
 
 % 代码高亮
@@ -37,6 +48,107 @@
 \begin{frame}{目录}
   \tableofcontents
 \end{frame}
+
+
+\section{Matlab介绍}
+\begin{frame}[fragile]{Matlab简介}
+  Matlab（矩阵实验室）是由美国MathWorks公司开发的一种高级技术计算语言和交互式环境，广泛应用于科学计算、数据分析、算法开发和可视化等领域。
+\end{frame}
+
+\begin{frame}[fragile]{为什么选MATLAB？}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{MATLAB}
+\begin{itemize}
+  \item 功能丰富：\textbf{内置}数学计算函数和工具箱（各领域的函数库）、交互式工作区、工程领域标准
+  \item 多工具箱：不需要会环境配置，安装好后开箱即用
+  \item 文档齐全，内置帮助文档（按F12即可查看函数详细用法），相比去问AI会更加精确且全面
+  \item 付费软件，昂贵的授权费，每个工具箱还需要单独付费\footnote{其实我们学校之前是有订阅过的，但是嘛，这里有个悲伤的故事……}，很多学校没有资金订阅
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Python}
+\begin{itemize}
+  \item 功能丰富：有numpy、sklearn、pandas、matplotlib等科学计算库、jupyter notebook交互式工作区，但是需要会环境配置和手动安装
+  \item 多开源包：需要会环境管理/虚拟环境（anaconda、uv、venv等）
+  \item 教程齐全：作为一门热门语言，网络上教程很多，问LLM也能得到不错的答案
+  \item 免费软件：免费、开源、社区活跃，每个人都能自由的使用（freeware）
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{为什么数模初学者用MATLAB？}
+  MATLAB 是工程领域的计算器+画图板+方程求解器——5分钟从数据到图表，无需折腾环境配置。安装完立即算矩阵、画图、解方程，让新生专注算法而非工具；而 Python 需要先学虚拟环境管理，对完全零基础的大一同学是额外负担。但自己装 Python 的编程环境常见的环境问题（依赖冲突、版本不兼容）往往劝退初学者。
+\end{frame}
+
+\begin{frame}{Matlab版本选择}
+  Matlab相邻版本之间差别并不大。且近年更新的高级功能做数模一般用不上，所以只要不用过于老的版本（推荐使用 $\ge 2016b$），语法都是通用的。
+  
+  \textbf{ab尾缀的含义：}
+  \begin{itemize}
+    \item \textbf{a}：上半年发布的版本，通常在3月份发布
+    \item \textbf{b}：下半年发布的版本，通常在9月份发布
+  \end{itemize}
+  
+  通常来说，一个a版本发布后，经过几个月的使用和反馈，MathWorks会修复一些Bug，并在同年秋季的b版本中使其更加稳定。所以\textbf{推荐使用b尾缀的版本}。
+  
+  接下来的教程是基于Matlab R2024b的，如果你的版本不是2024b也没有关系，操作完全相同。
+\end{frame}
+
+\begin{frame}[fragile]{Matlab安装实操演示}
+  自行下载matlab，网盘链接在钉钉群中
+  
+  如果下载速度过慢，可以带u盘下课找我拷贝
+  
+  \textit{TODO: 安装matlab过程截图}
+\end{frame}
+
+\section{Matlab的基础使用}
+
+\subsection{认识Matlab基本界面}
+
+\begin{frame}[fragile]{Matlab基本界面介绍}
+  双击Matlab图标，等待一会儿，就会出现白色的Matlab软件窗口。
+
+  工作区（当前工作目录）|命令行窗口|文件命名规范|运行代码
+\end{frame}
+
+\begin{frame}[fragile]{Matlab工作区}
+  工作区，顾名思义就是进行工作的地方。
+
+  建议先更换工作区到自己准备好的地方，做好文件管理，不要到处都散乱着代码文件。
+
+  \textit{TODO: 详细过程介绍+截图}
+\end{frame}
+
+
+
+
+\section{简单数学模型的介绍}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{问题背景}
 \begin{frame}{研究问题}
@@ -88,11 +200,11 @@ end
 \end{frame}
 
 % 新增：单行短代码块（verbatim）
-\begin{frame}[fragile]{单行短代码块（verbatim）}
-单行或几行的简短代码可以用 verbatim 环境：
-\begin{verbatim}
-x = 1; y = x^2; disp(y)
-\end{verbatim}
-\end{frame}
+% \begin{frame}[fragile]{单行短代码块（verbatim）}
+% 单行或几行的简短代码可以用 verbatim 环境：
+% \begin{verbatim}
+% x = 1; y = x^2; disp(y)
+% \end{verbatim}
+% \end{frame}
 
 \end{document}
