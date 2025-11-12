@@ -601,7 +601,7 @@ end
 
 
 \begin{frame}[fragile]{Matlab中的循环与条件语句}
-  推荐用向量化代替循环。
+  推荐用\textbf{向量化}代替循环。
 
   
   可以直接用sum函数计算1到100的和，而不需要循环。
@@ -624,7 +624,7 @@ sum_val = sum(1:100);  % 1行代码 vs 5行循环
 
 
 \begin{frame}[fragile]{Matlab中的函数定义与调用}
-  受于篇幅原因，这次只将最简单的函数定义方式，主要是可以用于符号计算等场景。
+  受于篇幅原因，只介绍最简单的函数定义方式，可以用于符号计算等场景。
 
   \begin{figure}
     \centering
@@ -673,7 +673,7 @@ sum_val = sum(1:100);  % 1行代码 vs 5行循环
 
 \section{Matlab简单应用} % 给两道题目
 
-\subsection{复杂矩阵的构造} % 简单的题目
+\subsection{矩阵运算} % 简单的题目
 
 \begin{frame}[fragile]{问题1}
   \scriptsize 1. 请用分别一行代码，生成以下矩阵：
@@ -715,28 +715,56 @@ A(A<0) = 0
 
 
 
-\subsection{递推加速} % 斐波那契+矩阵加速+矩阵快速幂
+\subsection{递推计算} % 斐波那契
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{问题2}
+  \textbf{计算斐波那契数列第N项模p的值}
+
+  $$F_n = F_{n-1} + F_{n-2} \mod p$$
   
-  \begin{lstlisting}[style=matCN]
+  求 $F_N \mod p$
 
+  其中，$N = 10^8$，$p = 10^9+7$
 
-  \end{lstlisting}
+  \texttt{\scriptsize同时看看，你的程序需要多长时间计算出结果？}
+  
 \end{frame}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{问题2答案}
 
+  \codeinfo{Section3_2_fib.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc;clear;
+% 计算斐波那契数列第N项模p的值
+N=100000000;
+p=1000000007;
+% 递推关系：F(i) = F(i-1) + F(i-2)
+tic
+A1 = 1; % F(1)，即前一项 -> 在迭代过程中代表F(i-1)
+A2 = 1; % F(2)，即当前项 -> 在迭代过程中代表F(i)
+for i=3:N % 然后这里只需要从第3项开始迭代，每次迭代生成第i项
+    t=A2; % 临时存储一下当前项A2，其在下一轮会变成前一项A1
+    A2=mod(A1+A2,p); % 递推出新的一项，并取模防止溢出
+    A1=t; % 将原来的当前项作为下一轮的前一项
+end
+result=A2; % F(N)
+disp(result);
+toc
   \end{lstlisting}
 \end{frame}
 
 
 \subsection{数值计算} % 方程求解+积分+微分
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{问题3}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{问题3答案}
 
   \begin{lstlisting}[style=matCN]
 
@@ -750,21 +778,67 @@ A(A<0) = 0
 
 
 
-\section{简单数学模型的介绍}
+\section{简单数学模型}
+
 \subsection{线性回归}
 
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
 
 
-\subsection{线性规划模型与求解}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
 
 
-\subsection{复杂规划模型与启发式算法求解}
+  \end{lstlisting}
+\end{frame}
+
+\subsection{非线性规划模型与启发式算法求解}
+
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
 
 
 \section{课后习题}
 
+\subsection{线性回归}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
 
 
+  \end{lstlisting}
+\end{frame}
+
+\subsection{非线性规划}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
 
 \section{总结与答疑}
 
