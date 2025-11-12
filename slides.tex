@@ -26,10 +26,10 @@
 \graphicspath{{figs/}}  % 图片直接放到figs目录下
 
 % 调整段间距
-\setlength{\parskip}{0.5em}
+\setlength{\parskip}{0.4em}
 
 
-
+\newcommand{\CN}[1]{{\CJKfamily{hei}#1}} % 或 song/ Kai 等
 % 代码高亮
 \usepackage{xcolor}
 \usepackage{listings}        % 简单代码渲染
@@ -43,20 +43,24 @@
   stringstyle=\color{red},
   columns=fullflexible,           % 避免宽度计算问题
   keepspaces=true,                % 保留空格
-  texcl=false                     % 把%后当LaTeX
+  texcl=false,                    % 把%后当LaTeX
+  escapeinside={(*@}{@*)},        % 代码中插入LaTeX
 }
+
 \lstdefinestyle{matCN}{
   basicstyle=\ttfamily\scriptsize, % 小一点的字体
   aboveskip=0.3ex,
-  belowskip=0.3ex,
+  belowskip=-0.5ex,
   language=Matlab,
   texcl=true,         % 只在 Matlab 开
   morecomment=[l]\%,  % Matlab 单行注释
-  morestring=[b]"     % 声明双引号字符串，避免其中的 % 被当注释
+  morestring=[b]",     % 声明双引号字符串，避免其中的 % 被当注释
 }
 
 % \usepackage{listingsutf8}    % 支持 utf8
 \lstset{inputencoding=utf8}
+
+
 
 % 添加代码块标题
 \DeclareRobustCommand{\codeinfo}[1]{%
@@ -466,24 +470,166 @@ fprintf('Today''s temperature is: %d\n', 25) % 需要加\textbackslash n，fprin
 
 
 \begin{frame}[fragile]{矩阵的基本运算} % 转置 加减点叉乘除幂
+  MATLAB的核心优势就是矩阵运算。掌握这些运算符，你就能像处理数字一样轻松而批量快速的处理矩阵。
+
+
+  \codeinfo{Sectione2_6_operation.m}
   \begin{lstlisting}[style=matCN]
-
-
+A = [1 2; 3 4];
+A_T = A';    % 加一个单引号 '
   \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{矩阵的基本运算}
+  \scriptsize矩阵加减法：对应元素相加减，要求矩阵维度相同。
+  
+
+  \codeinfo{Sectione2_6_operation.m}
+  \begin{lstlisting}[style=matCN]
+A = [1 2; 3 4];
+B = [5 6; 7 8];
+C = A + B    % [6 8; 10 12]
+D = A - B    % [-4 -4; -4 -4]
+  \end{lstlisting}
+
+  \scriptsize矩阵乘法和矩阵点乘：矩乘要求矩阵A的列数等于矩阵B的行数；点乘要求矩阵维度相同，对应元素相乘。
+
+  \codeinfo{Sectione2_6_operation.m}
+  \begin{lstlisting}[style=matCN]
+A = [1 2; 3 4];
+B = [5 6; 7 8];
+% 矩阵乘法（线代）
+C = A * B        % 2x2 * 2x2 = 2x2
+% 点乘（对应元素相乘）
+D = A .* B       % [1*5 2*6; 3*7 4*8] = [5 12; 21 32]
+  \end{lstlisting}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{矩阵的基本运算}
+  \scriptsize矩阵除法和点除
+
+  \codeinfo{Sectione2_6_operation.m}
+  \begin{lstlisting}[style=matCN]
+A = [2 4; 6 8];
+B = [1 2; 3 4];
+C = A / B    % 矩阵右除（等价于 A * inv(B)）
+D = A ./ B   % 点除 [2/1 4/2; 6/3 8/4] = [2 2; 2 2]
+% 向左倾斜的是左除，A\textbackslash B等价于inv(A) * B。
+  \end{lstlisting}
+
+  \scriptsize矩阵幂和点幂
+
+  \codeinfo{Sectione2_6_operation.m}
+  \begin{lstlisting}[style=matCN]
+A = [1 2; 3 4];
+B = A^2      % A * A （矩阵乘法）
+C = A.^2     % [$1^2$ $2^2$; $3^2$ $4^2$] = [1 4; 9 16]
+  \end{lstlisting}
+
+  \small总结：矩阵运算符前加点（\texttt{.*}, \texttt{./}, \texttt{.\textasciicircum}）表示对应元素操作。否则则为矩阵操作。如果出现运算的报错，优先检查是不是忘记加点了
+
+\end{frame}
+
+\begin{frame}[fragile]{矩阵的基本运算}
+  \scriptsize 矩阵元素的访问与修改
+
+  \codeinfo{Sectione2_6_operation.m}
+  \begin{lstlisting}[style=matCN]
+% matrix(row,col) ：访问row行，col列的元素，修改可直接加上赋值号。
+% matrix(num) ：按照顺序访问，特别注意，matlab一列一列的访问，与其它语言不同。
+% matrix(row,:) ：访问第row行的所有元素。
+% matrix(row,:)=[1,2,……] ：修改第row行，直接赋值覆盖原值。
+% matrix(row,:)=[] ：删除第row行。
+% matrix(:,col) ：表示第col列的相关操作，和行一致。
+matrix=[1,2,3,4;5,6,7,8]
+[matrix(1) matrix(2) matrix(3)] % 发现单参数访问顺序是 1 5 2 6 3 7 5 8
+matrix(2,4) % 第2行第4列
+matrix(1,:) % 第一行,所有列，即第一行一整行
+matrix(:,1) % 所有行,第一列，即第一列一整列
+matrix(1,1)=100 % 修改第一行第一列为100
+temp=matrix; temp(1,:)=[] % 删除第一行。同时矩阵会从2*4变成1*4
+temp=matrix; temp(:,2)=[] % 删除第二列。同时矩阵会从2*4变成2*3
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Matlab中的循环与条件语句}
+  \scriptsize作为一门编程语言，为什么这么晚才讲循环与条件？因为Matlab的核心思想就是“向量化>循环”，能用矩阵运算的就不要用循环。
+
+  \scriptsize下面简单介绍循环和条件语句的写法。
+
+  \codeinfo{Section2_7_loop_condition.m}
+  \begin{lstlisting}[style=matCN]
+score = 85;
+if score >= 90
+    disp("(*@\CN{优秀}@*)")
+elseif score >= 60
+    disp("(*@\CN{及格}@*)")
+else
+    disp("(*@\CN{挂科}@*)")
+end
+  \end{lstlisting}
+
+  \scriptsize if后直接跟着条件，以end结束。elseif和else可选。
+
+  \scriptsize用\texttt{==}表示等于而不是赋值\texttt{=}。此外，有\texttt{\&}表示逻辑与，\texttt{|}表示逻辑或，\texttt{\textasciitilde}表示逻辑非。
 \end{frame}
 
 \begin{frame}[fragile]{Matlab中的循环与条件语句}
+
+  \codeinfo{Section2_7_loop_condition.m}
   \begin{lstlisting}[style=matCN]
+sum_val = 0;
+for i = 1:100
+    sum_val = sum_val + i;  % 计算1+2+...+100
+end
+disp(sum_val)  % 结果：5050
+
+% 错误示范：在循环中动态扩展数组
+A = []; % 应该写成 A=zeros(10000,1);
+for i = 1:10000
+    A(i) = i;
+end
+% 会给警告：变量的大小似乎在(脚本内的)每个循环迭代都会更改。请考虑进行预分配以提升速度。
+  \end{lstlisting}
+
+  \scriptsize特别地，在for中尽量避免动态地扩展数组。这是因为循环中每次迭代都要重新分配内存，这会耗费大量时间。
+
+\end{frame}
 
 
+\begin{frame}[fragile]{Matlab中的循环与条件语句}
+  推荐用向量化代替循环。
+
+  
+  可以直接用sum函数计算1到100的和，而不需要循环。
+
+  对于简单的条件语句，也可以用逻辑缩索引来代替if。
+
+  \codeinfo{Section2_7_loop_condition.m}
+  \begin{lstlisting}[style=matCN]
+% 判断成绩等级
+scores = [85, 92, 45, 78];  % 4个学生的成绩
+pass = scores >= 60;        % [1, 1, 0, 1] 逻辑向量
+disp(scores(pass))          % 直接输出及格分数：[85,92,78]
+
+% 计算1+2+...+100
+sum_val = sum(1:100);  % 1行代码 vs 5行循环
   \end{lstlisting}
 \end{frame}
 
+
+
+
 \begin{frame}[fragile]{Matlab中的函数定义与调用}
-  \begin{lstlisting}[style=matCN]
+  受于篇幅原因，这次只将最简单的函数定义方式，主要是可以用于符号计算等场景。
 
-
-  \end{lstlisting}
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.5\textheight]{Akari.jpeg}
+  \end{figure}
 \end{frame}
 
 
@@ -530,7 +676,7 @@ fprintf('Today''s temperature is: %d\n', 25) % 需要加\textbackslash n，fprin
 \subsection{复杂矩阵的构造} % 简单的题目
 
 \begin{frame}[fragile]{问题1}
-  请用分别一行代码，生成以下矩阵：
+  \scriptsize 1. 请用分别一行代码，生成以下矩阵：
   \begin{itemize}
     \item 3行4列的随机矩阵
     \item 3行10列的矩阵，元素为1到30的连续整数
@@ -538,10 +684,14 @@ fprintf('Today''s temperature is: %d\n', 25) % 需要加\textbackslash n，fprin
   \end{itemize}
 
   （提示：请使用help自学reshape函数）
+
+  2. 已知\texttt{x=[1 2 3]; y=[4 5 6];}，请用一行代码计算两个向量的点积（提示：元素相乘再求和）
+
+  3. 已知\texttt{A=[3, -1, 4, -2, 5];}，请用一行代码把A中负数变成0，正数不变（提示：用逻辑索引）
 \end{frame}
 
 \begin{frame}[fragile]{问题1答案}
-  \codeinfo{Section3_1.m}
+  \codeinfo{Section3_1_ans.m}
   \begin{lstlisting}[style=matCN]
 % 3行4列的随机矩阵
 A = rand(3, 4)
@@ -551,6 +701,14 @@ B = reshape(1:30, 3, 10)
 
 % 下三角部分为[0,1]上是均匀随机数，其余为全1的5行5列矩阵
 C = ones(5) + tril(rand(5)-1)
+
+% 计算两个向量的点积
+x = [1 2 3]; y = [4 5 6];
+sum(x .* y)
+
+% 负数变0，正数不变
+A = [3, -1, 4, -2, 5];
+A(A<0) = 0
   \end{lstlisting}
 \end{frame}
 
