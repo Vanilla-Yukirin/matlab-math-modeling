@@ -4,7 +4,7 @@
 \PassOptionsToPackage{unicode,CJKbookmarks}{hyperref}
 \usepackage[UTF8]{ctex}      % 中文支持
 
-% 字体与编码：确保无衬线有真正的 italic 形状，消除 OT1/cmss/... 告警 ——
+% 字体与编码：确保无衬线有真正的 italic 形状，消除 OT1/cmss/... 的warning
 \usepackage[T1]{fontenc}            % 西文字体用 T1 编码
 \usepackage[default,scale=0.95]{sourcesanspro} % 无衬线换为 Source Sans Pro（含 italic）
 % \usepackage[default]{FiraSans}     % 备选：Fira Sans
@@ -17,8 +17,18 @@
 
 % 主题
 % https://mpetroff.net/files/beamer-theme-matrix/
-\usetheme{Ilmenau}       % 主题
-\usecolortheme{whale}        % 颜色主题 beaver dolphin whale
+\usetheme{Ilmenau}
+% 颜色主题 beaver dolphin whale
+\usecolortheme{whale}
+
+% 插入图片
+\usepackage{graphicx}
+\graphicspath{{figs/}}  % 图片直接放到figs目录下
+
+% 调整段间距
+\setlength{\parskip}{0.5em}
+
+
 
 % 代码高亮
 \usepackage{xcolor}
@@ -30,8 +40,21 @@
   showstringspaces=false,
   keywordstyle=\color{blue},
   commentstyle=\color{gray},
-  stringstyle=\color{red}
+  stringstyle=\color{red},
+  columns=fullflexible,           % 避免宽度计算问题
+  keepspaces=true,                % 保留空格
+  texcl=false                     % 把%后当LaTeX
 }
+\lstdefinestyle{matCN}{
+  basicstyle=\ttfamily\scriptsize,
+  language=Matlab,
+  texcl=true,         % 只在 Matlab 开
+  morecomment=[l]\%,  % Matlab 单行注释（可保留也可省略）
+}
+
+% 支持 utf8 的 listings
+\usepackage{listingsutf8}
+\lstset{inputencoding=utf8}
 
 % 信息
 \title{Matlab与简单数学模型}
@@ -46,8 +69,17 @@
 \end{frame}
 
 \begin{frame}{目录}
-  \tableofcontents
+  \small
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={1-3}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={4-6}]
+    \end{column}
+  \end{columns}
 \end{frame}
+
 
 
 \section{Matlab介绍}
@@ -55,31 +87,37 @@
   Matlab（矩阵实验室）是由美国MathWorks公司开发的一种高级技术计算语言和交互式环境，广泛应用于科学计算、数据分析、算法开发和可视化等领域。
 \end{frame}
 
-\begin{frame}[fragile]{为什么选MATLAB？}
+\subsection{Matlab与Python的对比}
+
+\begin{frame}[fragile]{选Matlab还是Python}
 \begin{columns}[T]
 \column{0.5\textwidth}
-\textbf{MATLAB}
+\textbf{Matlab}
 \begin{itemize}
-  \item 功能丰富：\textbf{内置}数学计算函数和工具箱（各领域的函数库）、交互式工作区、工程领域标准
-  \item 多工具箱：不需要会环境配置，安装好后开箱即用
+  \item \textbf{内置}数学计算函数和工具箱、交互式工作区、工程领域标准。不需要会环境配置，安装好后开箱即用
   \item 文档齐全，内置帮助文档（按F12即可查看函数详细用法），相比去问AI会更加精确且全面
-  \item 付费软件，昂贵的授权费，每个工具箱还需要单独付费\footnote{其实我们学校之前是有订阅过的，但是嘛，这里有个悲伤的故事……}，很多学校没有资金订阅
+  \item 付费软件，昂贵的授权费，每个工具箱还需要单独付费\footnote{其实我们学校之前是有订阅过的，但是嘛……}，很多学校没有资金订阅
 \end{itemize}
 
 \column{0.5\textwidth}
 \textbf{Python}
 \begin{itemize}
-  \item 功能丰富：有numpy、sklearn、pandas、matplotlib等科学计算库、jupyter notebook交互式工作区，但是需要会环境配置和手动安装
-  \item 多开源包：需要会环境管理/虚拟环境（anaconda、uv、venv等）
-  \item 教程齐全：作为一门热门语言，网络上教程很多，问LLM也能得到不错的答案
-  \item 免费软件：免费、开源、社区活跃，每个人都能自由的使用（freeware）
+  \item 有numpy、sklearn、matplotlib等科学计算库、jupyter notebook交互式工作区，但是需要掌握环境管理/虚拟环境（anaconda、uv、venv等）
+  \item 教程齐全。作为一门\textbf{热门语言}，网络上教程很多，问LLM也能得到不错的答案
+  \item 免费软件，免费、开源、社区活跃，每个人都能自由的使用（freeware）
 \end{itemize}
 \end{columns}
 \end{frame}
 
-\begin{frame}{为什么数模初学者用MATLAB？}
-  MATLAB 是工程领域的计算器+画图板+方程求解器——5分钟从数据到图表，无需折腾环境配置。安装完立即算矩阵、画图、解方程，让新生专注算法而非工具；而 Python 需要先学虚拟环境管理，对完全零基础的大一同学是额外负担。但自己装 Python 的编程环境常见的环境问题（依赖冲突、版本不兼容）往往劝退初学者。
+\begin{frame}{为什么建议数模初学者用Matlab}
+\begin{itemize}
+  \item Matlab 是工程领域的计算器+画图板+方程求解器——5分钟从数据到图表，无需折腾环境配置。安装完立即算矩阵、画图、解方程，让大家专注算法而非工具；
+  \item 而 Python 需要先学虚拟环境管理，对完全零基础的同学是额外负担。
+  \item 装 Python 的编程环境常见的环境问题（依赖冲突、版本不兼容）往往劝退初学者。
+\end{itemize}
 \end{frame}
+
+\subsection{Matlab的版本选择与安装}
 
 \begin{frame}{Matlab版本选择}
   Matlab相邻版本之间差别并不大。且近年更新的高级功能做数模一般用不上，所以只要不用过于老的版本（推荐使用 $\ge 2016b$），语法都是通用的。
@@ -95,12 +133,12 @@
   接下来的教程是基于Matlab R2024b的，如果你的版本不是2024b也没有关系，操作完全相同。
 \end{frame}
 
-\begin{frame}[fragile]{Matlab安装实操演示}
-  自行下载matlab，网盘链接在钉钉群中
+\begin{frame}[fragile]{Matlab安装演示}
+  自行下载Matlab，网盘链接在钉钉群中
   
   如果下载速度过慢，可以带u盘下课找我拷贝
   
-  \textit{TODO: 安装matlab过程截图}
+  \textit{TODO: 安装Matlab过程截图}
 \end{frame}
 
 \section{Matlab的基础使用}
@@ -110,84 +148,326 @@
 \begin{frame}[fragile]{Matlab基本界面介绍}
   双击Matlab图标，等待一会儿，就会出现白色的Matlab软件窗口。
 
-  工作区（当前工作目录）|命令行窗口|文件命名规范|运行代码
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{Matlab_main.png}
+    \caption{Matlab R2024b 界面示例}
+  \end{figure}
 \end{frame}
+
+\begin{frame}[fragile]{Matlab基本界面介绍}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.55\textwidth]{Matlab_main_detail.png}
+    \caption{Matlab R2024b 界面示例}
+  \end{figure}
+\end{frame}
+
+
 
 \begin{frame}[fragile]{Matlab工作区}
-  工作区，顾名思义就是进行工作的地方。
+  工作区，顾名思义就是进行工作的地方。建议先更换工作区到准备好的地方，做好文件管理，不要到处都散乱着代码文件。
 
-  建议先更换工作区到自己准备好的地方，做好文件管理，不要到处都散乱着代码文件。
+  通常，初次启动Matlab时，默认路径可能是\texttt{C:\textbackslash Users\textbackslash 用户名\textbackslash Documents\textbackslash MATLAB}，建议更改为自己准备好的工作目录。
 
-  \textit{TODO: 详细过程介绍+截图}
+  \texttt{\small个人习惯在比赛目录下新建一个code或者workspace文件夹专门用来存放代码}
 \end{frame}
+
+\begin{frame}[fragile]{更换工作区目录}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.50\textwidth]{Matlab_openfolder.png}
+    \caption{更换当前工作目录}
+  \end{figure}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{命令行窗口}
+  命令行窗口的左上角会有三个大于号：\texttt{\lstinline|>>|}，表示等待用户输入命令。
+
+  命令行窗口是 Matlab 最常用的窗口，用于输入命令、执行命令、查看结果。
+
+  可以直接在命令行窗口中写一些简单的代码，也可以把它当作一个\textbf{全能计算器}。
+
+  \begin{lstlisting}[style=matCN]
+>> format long % set long format
+>> pi
+ans =
+   3.141592653589793
+>> pi^2
+ans =
+   9.869604401089358
+>> 
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{命令行窗口}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{Command.png}
+    \caption{命令行窗口}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{文件命名规范}
+  MATLAB 文件名必须以字母开头，最多包含 63 个字母数字字符或下划线。
+
+  也就是说：
+  \begin{itemize}
+    \item 不能以数字开头
+    \item 不能包含中文
+    \item 不能用减号 \texttt{-}，应使用下划线 \texttt{\_}
+  \end{itemize}
+
+养成良好的文件命名习惯，可以帮助我们在数模比赛中快速的找到文件。在数模比赛中，由于会有很多道子问题，所以个人推荐这样命名，既规整又有含义：
+  \begin{itemize}
+    \item \texttt{problem1\_GA.m} — 问题一，使用遗传算法
+    \item \texttt{problem2\_draw.m} — 问题二，画图相关代码
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{运行代码}
+  新建 \texttt{HelloWorld.m} 文件，写入如下内容，然后用编辑器的运行按钮或命令行运行。
+
+\begin{lstlisting}[style=matCN]
+clc; % clear console
+clear; % clear variables
+n=input("Please input a number: ");
+n
+fprintf("Hello, World!\n")
+\end{lstlisting}
+
+  常见运行方式：
+  \begin{enumerate}
+    \item 上方的“运行”按钮
+    \item 选中代码，按 F9（在命令行中执行所选）
+    \item 在行号左侧点击出现的运行蓝条
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{运行代码示例}
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[height=0.3\textheight]{Run_code1.png}\\[0.4em]
+    \small (a) 运行按钮
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[height=0.3\textheight]{Run_code2.png}\\[0.4em]
+    \small (b) 选中代码按F9/右键运行
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[height=0.3\textheight]{Run_code3.png}\\[0.4em]
+    \small (c) 左侧点击运行（运行段）
+  \end{minipage}
+  \vspace{0.6em}
+
+  运行后命令行会显示“\texttt{Please input a number: }”，
+  
+  输入一个数字并回车后，会输出你输入的数字并打印 \texttt{Hello, World!}。
+
+\end{frame}
+
+\subsection{Matlab基本语法}
+
+\begin{frame}[fragile]{从矩阵开始}
+  Matlab 的名字是“矩阵实验室”，内部数据以矩阵为主，直接面向矩阵进行运算。
+  \begin{lstlisting}[style=matCN]
+clc;clear; % 清空控制台和变量
+A=[1,2,3;4,5,6;7,8,9] % 创建矩阵A，是一个3行3列的矩阵
+% [] 表示构建一个矩阵
+% 逗号或空格用来分隔同一行不同列的元素
+% 分号用来分隔不同行（同一列）的元素，或者说表示换行
+
+A(1:2,:) % 拆：取A的前两行
+% 矩阵后面连着一个括号，代表取矩阵的某个部分
+% 第一个参数 1:2 表示“从1到2”，即第1行和第2行
+% 第二个参数 : 表示“所有”
+% 所以这里取的是A的前两行，所有列
+
+B=[A;10,11,12] % 添：在A的下面添加一行新数据，构成新矩阵B
+% 把新行 [10 11 12] 用分号和A连接，表示把新行添加到A的下面
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{向量是简单的矩阵}
+  向量是特殊的矩阵，向量可以看作是只有一行或者一列的矩阵。
+
+  \texttt{\scriptsize同理，标量可以看作是1行1列的矩阵。这也是为什么Matlab中万物皆矩阵}
+
+  \begin{lstlisting}[style=matCN]
+clc;clear
+x = [1 2 3 4 5]        % 一行五列 → 行向量
+y = [1; 2; 3; 4; 5]    % 五行一列 → 列向量
+c=1:1:10; % 创建一个从1到10的向量
+  \end{lstlisting}
+
+
+
+
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]{变量名和ans} % 变量名和ans
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{分号与常用输出方式} % 分号与常用输出方式
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{常用的矩阵创建函数}
+  \begin{lstlisting}[style=matCN]
+clc;clear
+% 常见向量、矩阵的创建
+a=[1,2,3,4,5,6,7,8,9]; % 创建一个向量
+b=[1,2,3;4,5,6;7,8,9]; % 创建一个矩阵
+c=1:1:10; % 创建一个从1到10的向量
+e=eye(4); % 生成4维单位矩阵
+z=zeros(1,4); % 生成1行4列的全零矩阵
+o=ones(4,1); % 生成4行1列的全1矩阵
+r=rand(4); % 生成4*4的0-1范围内的随机矩阵
+rn=randn(4); % 生成4*4的均值为0，方差为1的高斯分布随机矩阵
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{矩阵的基本运算} % 转置 加减点叉乘除幂
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Matlab中的循环与条件语句}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Matlab中的函数定义与调用}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{} % 符号计算？数值积分？
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\subsection{Matlab基础绘图}
+\begin{frame}[fragile]{绘图的作用}
+  绘图是数模与科研中必不可少的一环。
+  
+  绘图可以更方便的观察数据，也可以进行简单的数据处理。模型求解也通常需要用图像进行辅助展示。
+
+  % 短的绘图代码，绘制比较精彩的图像
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+
+  % 绘图效果展示
+  \begin{figure}
+  \centering
+  % \includegraphics[width=0.8\textwidth]{Plot_example.png}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+
+
+
+\section{Matlab简单应用} % 给两道题目
+\subsection{} % 简单的题目
+
+
+\subsection{递推加速} % 斐波那契+矩阵加速+矩阵快速幂
+
+\subsection{数值计算} % 方程求解+积分+微分
+
+
 
 
 
 
 \section{简单数学模型的介绍}
+\subsection{线性回归}
+
+
+
+\subsection{线性规划模型与求解}
+
+
+\subsection{复杂规划模型与启发式算法求解}
+
+
+\section{课后习题}
 
 
 
 
+\section{总结与答疑}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section{问题背景}
-\begin{frame}{研究问题}
-  给定序列 $a_1,\dots,a_n$，求连续子段最大和（Maximum Subarray）。
+\begin{frame}[fragile]{总结}
+\small
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={1-3}]
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \tableofcontents[sections={4-6}]
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\section{算法}
-\begin{frame}{Kadane 算法}
-  递推：$dp[i]=\max(a_i, dp[i-1]+a_i)$，答案为 $\max_i dp[i]$。
+\begin{frame}[fragile]{总结}
+今天晚上和周六周日，我会在数模5群里面看大家的问题
+
+大家可以把不懂的地方发到群里，我和数模协会的同学会尽量帮大家解答
 \end{frame}
 
-\begin{frame}[fragile]{示例代码（Python）}
-\begin{lstlisting}[language=Python]
-def max_subarray(a):
-    best = cur = a[0]
-    for x in a[1:]:
-        cur = max(x, cur + x)
-        best = max(best, cur)
-    return best
-\end{lstlisting}
-\end{frame}
 
-\begin{frame}[fragile]{示例代码（Matlab）}
-\begin{lstlisting}[language=Matlab]
-function ans = max_subarray(a)
-    best = a(1);
-    cur = a(1);
-    for i = 2:length(a)
-        cur = max(a(i), cur + a(i));
-        best = max(best, cur);
-    end
-    ans = best;
-end
-\end{lstlisting}
-\end{frame}
 
-\begin{frame}{结论}
-  Kadane 算法：时间 $O(n)$，空间 $O(1)$。
-\end{frame}
+
+
+
+
+
+
+
+
+
+
 
 % 新增：行内等宽（不需要 fragile）
 \begin{frame}{行内等宽：\texttt{...}}
