@@ -1,5 +1,26 @@
-\frametitle{总结}
-今天晚上和周六周日，我会在数模5群里面看大家的问题
+\frametitle{答疑\footnote {\href {https://lug.ustc.edu.cn/wiki/doc/howtoask/}{提问指南}}\footnote {\href {https://lug.ustc.edu.cn/wiki/doc/smart-questions/}{提问的智慧}}}
 
-大家可以把不懂的地方发到群里，我和数模协会的同学会尽量帮大家解答
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+今天晚上和周六周日，我会在数模5群里答疑。大家可以把不懂的地方发到群里，我和数模协会的同学会尽量帮大家解答。
+
+    \end{column}
+    \begin{column}{0.48\textwidth}
+
+\small 希望大家在提问时，能够使问题易于回复：
+
+\scriptsize 1. 能够使用清晰、正确、精准且合乎语法的语句描述问题和操作流程。
+
+\scriptsize 2. 使用易于读取且标准的格式发送问题（完整的代码/代码截图，不要拍屏，必要时可以发文件）。
+
+\scriptsize 3. 精确地描述问题并言之有物。
+
+      \begin{figure}
+        \centering
+        \includegraphics[height=0.25\textheight]{problem_price.jpg}
+        \caption{开个小玩笑}
+      \end{figure}
+    \end{column}
+  \end{columns}
+
 

@@ -25,6 +25,10 @@
 \usepackage{graphicx}
 \graphicspath{{figs/}}  % 图片直接放到figs目录下
 
+% 题注字体大小
+\setbeamerfont{caption}{size=\scriptsize}      % 控制题注文字
+\setbeamerfont{caption name}{size=\scriptsize} % 控制“图 x:”这部分
+
 % 调整段间距
 \setlength{\parskip}{0.4em}
 
@@ -1217,35 +1221,208 @@ X = [ones(length(x1),1), x1, x2, x3];
 \subsection{非线性规划模型与求解}
 
 
-\begin{frame}[fragile]{什么是非线性规划}
+\begin{frame}[fragile]{什么是非线性规划\footnote{\tiny在上一节初级班中，王学长已经讲过如何使用 lingo 求解线性规划问题。我也觉得对于简单的线性规划问题而言，lingo 是一个更好的选择。所以这节课我就直接介绍非线性规划问题及其求解方法。}}
   \small 线性规划问题 = 规划问题 + 非线性的目标函数或约束。
   
-  \scriptsize 在上一节初级班中，王学长已经讲过如何使用 lingo 求解线性规划问题。我也觉得对于简单的线性规划问题而言，lingo 是一个更好的选择。所以这节课就直接介绍非线性规划问题及其求解方法。
+  % \texttt{}
   
   \small 非线性规划问题在建模中大量出现（生产调度，最大利润/效率，路径规划……）
 
   其基本形式如下：
   \begin{align}
-  & \min f(x)\\
-  s.t.\ & g(x)\le0,h(x)=0
+  & \min f(x)\nonumber\\
+  s.t.\ & g(x)\le0,h(x)=0\nonumber
   \end{align}
 
   非线性规划问题的特征：
 \begin{itemize}\scriptsize
-  \item 求函数的极小值/极大值
-  \item 求函数在一定区域内的极值
-  \item 求函数在一定区域且满足特定条件下的极值
+  \item 求某函数（在一定区域内）（满足特定条件下的）的极小值/极大值
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}[fragile]{非线性规划问题简单例题}
-  
+\begin{frame}[fragile]{例1：一维非线性函数}
+  \small 求该函数的局部极小值：
+$$
+\min f(x) = x^3 - 6x^2 + 4x + 12,\quad x\in[-2,6]
+$$
+
+  \begin{figure}
+  \centering
+  \includegraphics[height=0.40\textheight]{fminbnd_plot.png}
+  \caption{函数 $f(x)$ 在 $[-2,6]$ 区间的图像}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{例1：fminbnd 函数用法}
+  \small fminbnd函数能够查找单变量函数在定区间上的最小值。
+  \begin{lstlisting}[style=matCN]
+[x_min, fval] = fminbnd(fun, a, b)
+  \end{lstlisting}
+
+  \small 参数说明：
+  \begin{itemize}\scriptsize
+    \item \texttt{fun}：单变量的目标函数
+    \item \texttt{a, b}：搜索区间
+    \item \texttt{x\_min}：极小点
+    \item \texttt{fval}：对应函数值
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{例1：fminbnd 求解代码}
+
   \codeinfo{}
   \begin{lstlisting}[style=matCN]
 
 
   \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{例1：结果可视化}
+\begin{figure}
+\centering
+\includegraphics[height=0.65\textheight]{fminbnd_result.png}
+\caption{最优点标注于图中：$x^* = 3.6330$}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{例2：多变量无约束优化}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \small 求该函数的极小值：
+$$
+f(x,y) = (x-2)^2 + (y+1)^2 + \sin(xy)
+$$
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[height=0.60\textheight]{fminsearch_surface.png}
+        \caption{函数三维图像}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{例2：fminsearch 函数用法\footnote{\href{https://ww2.mathworks.cn/help/matlab/ref/fminsearch.html}{fminsearch - Matlab帮助中心}}}
+  非线性规划求解器 \texttt{fminsearch} 将使用使用无导数法搜索无约束的多变量函数的局部最小值。
+
+  \begin{lstlisting}[style=matCN]
+[x_min, fval] = fminsearch(fun, x0)
+  \end{lstlisting}
+
+  \small 参数说明：
+\begin{itemize}\scriptsize
+\item \texttt{fun}：以向量为输入的多变量函数
+\item \texttt{x0}：初始点（重要）会从点x0处开始并搜索目标函数最小值
+\item \texttt{x\_min}：局部最优解
+\item \texttt{fval}：最优值
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{例2：fminsearch 求解代码}
+
+  \codeinfo{}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{例2：结果可视化}
+\begin{figure}
+\centering
+\includegraphics[height=0.65\textheight]{fminsearch_result.png}
+\caption{最优点标注于三维图中}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{例3：带约束的非线性规划}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      \small 求该函数的极小值：
+      \begin{align}
+      &\min f(x,y) = x^2 + y^2 + 3\sin(x)\nonumber\\
+      s.t.\ &x^2+y^2\le4\nonumber
+      \end{align}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[height=0.60\textheight]{fmincon_contour.png}
+        \caption{等高线 + 圆形可行域}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{例3：fmincon 函数用法\footnote{\href{https://ww2.mathworks.cn/help/optim/ug/fmincon.html}{fmincon - Matlab帮助中心}}}
+  \small 非线性规划求解器 \texttt{fmincon} 可以寻找约束非线性多变量函数的最小值，用于求解 \textbf{带约束的非线性优化问题}，目标形式为：
+
+$$
+\min_{x}\ f(x)
+\quad\text{s.t.}\quad
+\begin{cases}
+c(x) \le 0, & \text{(非线性不等式约束)}\\[3pt]
+ceq(x) = 0, & \text{(非线性等式约束)}\\[3pt]
+A x \le b, & \text{(线性不等式约束)}\\[3pt]
+A_{\mathrm{eq}} x = b_{\mathrm{eq}}, & \text{(线性等式约束)}\\[3pt]
+\ell \le x \le u, & \text{(变量上下界)}
+\end{cases}
+$$
+
+其中 $x$ 可以是标量、向量，也可以是矩阵（按列展开解释）。
+
+\end{frame}
+
+
+\begin{frame}[fragile]{例3：fmincon 函数用法}
+  \small 使用格式如下：
+
+\begin{lstlisting}[style=matCN]
+[x_min, fval] = fmincon(fun, x0, A, b, Aeq, beq, lb, ub, nonlcon);
+\end{lstlisting}
+
+  其中：
+
+  \begin{itemize}\scriptsize
+    \item \texttt{fun}：目标函数句柄，返回标量 $f(x)$
+    \item \texttt{x0}：初始点（非常重要，会影响最终结果）
+    \item \texttt{A, b}：线性不等式 $Ax \le b$
+    \item \texttt{Aeq, beq}：线性等式 $A_{\mathrm{eq}}x = b_{\mathrm{eq}}$
+    \item \texttt{lb, ub}：变量下界与上界
+    \item \texttt{nonlcon}：非线性约束函数，需返回 $c(x)$ 与 $ceq(x)$
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{例3：fmincon 求解代码}
+
+  \codeinfo{}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{例3：结果可视化}
+\begin{figure}
+\centering
+\includegraphics[height=0.65\textheight]{fmincon_result.png}
+\caption{最优点位于可行域内}
+\end{figure}
 \end{frame}
 
 
@@ -1258,55 +1435,25 @@ X = [ones(length(x1),1), x1, x2, x3];
   \end{lstlisting}
 \end{frame}
 
-
-\begin{frame}[fragile]{}
-
-  \codeinfo{}
-  \begin{lstlisting}[style=matCN]
-
-
-  \end{lstlisting}
+\begin{frame}[fragile]{非线性优化方法总结}
+\small
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+方法 & 变量维度 & 是否可约束 & 适用场景 \\
+\hline
+\texttt{fminbnd} & 一维 & 有区间 $[a,b]$ & 单变量极小值 \\
+\hline
+\texttt{fminsearch} & 多维 & 无约束 & 多变量光滑函数局部极小 \\
+\hline
+\texttt{fmincon} & 多维 & 支持各种约束 & 真正的非线性规划问题 \\
+\hline
+\end{tabular}
+\caption{三种优化方法的区别与使用场景}
+\end{table}
 \end{frame}
 
-
-\begin{frame}[fragile]{}
-
-  \codeinfo{}
-  \begin{lstlisting}[style=matCN]
-
-
-  \end{lstlisting}
-\end{frame}
-
-
-\begin{frame}[fragile]{}
-
-  \codeinfo{}
-  \begin{lstlisting}[style=matCN]
-
-
-  \end{lstlisting}
-\end{frame}
-
-
-\begin{frame}[fragile]{}
-
-  \codeinfo{}
-  \begin{lstlisting}[style=matCN]
-
-
-  \end{lstlisting}
-\end{frame}
-
-
-\begin{frame}[fragile]{}
-
-  \codeinfo{}
-  \begin{lstlisting}[style=matCN]
-
-
-  \end{lstlisting}
-\end{frame}
 
 
 \section{课后习题}
@@ -1349,7 +1496,6 @@ X = [ones(length(x1),1), x1, x2, x3];
 \end{frame}
 
 \begin{frame}[fragile]{问题1-2结果展示}
-
   \begin{figure}
     \centering
     \includegraphics[height=0.75\textheight]{linear_prediction.png}
@@ -1417,10 +1563,31 @@ X = [ones(length(x1),1), x1, x2, x3];
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{总结}
-今天晚上和周六周日，我会在数模5群里面看大家的问题
+\begin{frame}[fragile]{答疑\footnote{\href{https://lug.ustc.edu.cn/wiki/doc/howtoask/}{提问指南}}\footnote{\href{https://lug.ustc.edu.cn/wiki/doc/smart-questions/}{提问的智慧}}}
 
-大家可以把不懂的地方发到群里，我和数模协会的同学会尽量帮大家解答
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+今天晚上和周六周日，我会在数模5群里答疑。大家可以把不懂的地方发到群里，我和数模协会的同学会尽量帮大家解答。
+
+    \end{column}
+    \begin{column}{0.48\textwidth}
+
+\small 希望大家在提问时，能够使问题易于回复：
+
+\scriptsize 1. 能够使用清晰、正确、精准且合乎语法的语句描述问题和操作流程。
+
+\scriptsize 2. 使用易于读取且标准的格式发送问题（完整的代码/代码截图，不要拍屏，必要时可以发文件）。
+
+\scriptsize 3. 精确地描述问题并言之有物。
+
+      \begin{figure}
+        \centering
+        \includegraphics[height=0.25\textheight]{problem_price.jpg}
+        \caption{开个小玩笑}
+      \end{figure}
+    \end{column}
+  \end{columns}
+
 
 \end{frame}
 
