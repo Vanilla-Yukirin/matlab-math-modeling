@@ -50,7 +50,7 @@
 \lstdefinestyle{matCN}{
   basicstyle=\ttfamily\scriptsize, % 小一点的字体
   aboveskip=0.3ex,
-  belowskip=-0.5ex,
+  belowskip=-0.7ex,
   language=Matlab,
   texcl=true,         % 只在 Matlab 开
   morecomment=[l]\%,  % Matlab 单行注释
@@ -624,7 +624,9 @@ sum_val = sum(1:100);  % 1行代码 vs 5行循环
 
 
 \begin{frame}[fragile]{Matlab中的函数定义与调用}
-  受于篇幅原因，只介绍最简单的函数定义方式，可以用于符号计算等场景。
+  Matlab 支持很多形式：匿名函数（\texttt{f=@(x)x.\textasciicircum2}）、文件内多函数、嵌套函数、类方法……
+  但入门阶段只需要掌握\textbf{最常用的一种：单文件函数}。
+
 
   \begin{figure}
     \centering
@@ -632,25 +634,101 @@ sum_val = sum(1:100);  % 1行代码 vs 5行循环
   \end{figure}
 \end{frame}
 
-
-\begin{frame}[fragile]{符号运算} % 符号计算？数值积分？
+\begin{frame}[fragile]{Matlab中的函数定义与调用}
+  \codeinfo{mySum.m}
   \begin{lstlisting}[style=matCN]
-
-
+function s = mySum(a, b) % 直接以function开头，且函数名与文件名完全一致
+% 传入了两个参数a和b
+s = a + b; % s是函数的返回值，在遇到function的end时会将s作为函数的值返回
+end
   \end{lstlisting}
+  
+  \scriptsize 上面定义了一个简单的函数mySum，功能是计算两个数的和。
+
+  \codeinfo{Section2_8_function.m}
+  \begin{lstlisting}[style=matCN]
+% 需要保证与函数文件mySum.m在同一个目录下
+result = mySum(10, 20);
+  \end{lstlisting}
+
+  \small 函数的三个要点：
+  \begin{itemize}
+    \item \scriptsize \texttt{function 输出 = 函数名(输入)}
+    \item \scriptsize 文件名必须和函数名相同
+    \item \scriptsize 用\texttt{end}结束
+  \end{itemize}
+
 \end{frame}
+
+
+\begin{frame}[fragile]{Matlab中的函数定义与调用}
+  \scriptsize 函数内部可以写多行代码，也可以返回多个变量。
+
+  \codeinfo{stat2.m}
+  \begin{lstlisting}[style=matCN]
+function [m, s] = stat2(x)
+m = mean(x); % 计算均值
+s = std(x);  % 计算标准差
+end
+  \end{lstlisting}
+  
+  \scriptsize 调用：
+
+  \codeinfo{Section2_9_function.m}
+  \begin{lstlisting}[style=matCN]
+function [m, s] = stat2(x)
+[data_mean, data_std] = stat2([1,2,3,4,5])
+% 函数也支持向量化运算，可以实现输入向量或矩阵得到批量运算结果。
+[datas_mean, datas_std] = stat2([1,2,3;4,5,6;7,8,9])
+end
+  \end{lstlisting}
+
+  \small 函数适合：重复计算、逻辑封装、让脚本更清晰。
+
+\end{frame}
+
+\begin{frame}[fragile]{符号运算}
+  \scriptsize 符号运算：让 Matlab 像在纸上做\textbf{代数、微积分推导}，而不是只是计算小数结果。
+
+  \codeinfo{Section2_10_symb.m}
+  \begin{lstlisting}[style=matCN]
+clc;clear
+% 1. 定义一个符号变量和函数 $f(x)$
+syms x              % 告诉 Matlab：$x$ 是“符号”
+f = x^3 - 2*x + 1;  % 像在高数里写函数
+% 2. 求导 $f'(x)$
+df = diff(f)        % 结果：$3\times x^2 - 2$
+% 3. 求不定积分 $\int f(x) dx$
+F = int(f)          % 结果：$x^4/4 - x^2 + x$
+% 4. 求定积分 $\int_0^1 f(x) dx$
+I = int(f, x, 0, 1) % 得到一个精确结果（分数）
+% 5. 在 $x = 2$ 处代入
+val = subs(f, x, 2) % 把 x 换成 2 代入
+  \end{lstlisting}
+
+  \scriptsize 这块和大家的\textbf{高等数学 / 数学分析}联系很紧：以后遇到复杂积分、推公式，可以先让 Matlab 帮你验算。
+\end{frame}
+
 
 \subsection{Matlab基础绘图}
 \begin{frame}[fragile]{绘图的作用}
-  绘图是数模与科研中必不可少的一环。
-  
-  绘图可以更方便的观察数据，也可以进行简单的数据处理。模型求解也通常需要用图像进行辅助展示。
+  \scriptsize 绘图是数模与科研中必不可少的一环，可以帮助我们：
+  \begin{itemize}\scriptsize
+    \item 快速观察数据趋势（如上升、震荡、周期性）；
+    \item 验证模型是否合理；
+    \item 制作论文与报告中的结果图像。
+  \end{itemize}
 
-  % 短的绘图代码，绘制比较精彩的图像
+  \scriptsize Matlab 中最简单的绘图方式：只给 \texttt{y}，默认横轴为 1,2,3,...
+
+  \codeinfo{Section2_11_plot.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc;clear;close all; % close用来关闭之前生成的绘图窗口
+y = [2, 4, 3, 5, 6, 4];
+plot(y);               % 本质上是默认 x = 1:length(y)
   \end{lstlisting}
+
+  只需要简单的一个\texttt{plot(y)}，就能画出数据的折线图。
 
   % 绘图效果展示
   \begin{figure}
@@ -667,6 +745,38 @@ sum_val = sum(1:100);  % 1行代码 vs 5行循环
   \end{lstlisting}
 \end{frame}
 
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{}
+
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
 
 
 
