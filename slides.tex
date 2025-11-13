@@ -151,7 +151,7 @@
   如果下载速度过慢，可以带u盘下课找我拷贝
   
   安装方法：参考公众号安装教程
-  
+
 \end{frame}
 
 \section{Matlab的基础使用}
@@ -1241,16 +1241,85 @@ X = [ones(length(x1),1), x1, x2, x3];
 
 \section{课后习题}
 
-\subsection{线性回归}
+\subsection{分析某网站用户增长情况}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{问题背景}
+  \scriptsize 你连续爬取了某网站的用户数量信息，记录了：
 
-  \codeinfo{}
+  \texttt{year, month, day, hour, minute, second, number}。
+
+\scriptsize 数据时间跨度：2025-11-04 ~ 2025-11-13，共约 427 条记录。
+
+  \codeinfo{homework1/data.csv}
   \begin{lstlisting}[style=matCN]
-
-
+2025,11,4,4,59,22,3825
+2025,11,4,5,20,47,3826
+2025,11,4,5,40,48,3827
+...
   \end{lstlisting}
+
 \end{frame}
+
+\begin{frame}[fragile]{问题1-1,1-2}
+  \small \textbf{任务 1：数据读取与预处理}
+  \begin{itemize}\scriptsize
+    \item 使用 \texttt{readmatrix} 读取 CSV 文件，并保存为矩阵
+    \item 查看数据结构（行数、列数）
+  \end{itemize}
+
+  \vspace{4pt}
+  \small \textbf{任务 2：基于时间秒数的一元线性回归}
+  \begin{itemize}\scriptsize
+    \item 将时间字段转换为“从 2025-11-04 00:00:00 起经过的总秒数”\texttt{t}
+    \item 构造模型：$number = \beta_0 + \beta_1 \cdot t + \varepsilon$
+    \item 使用 \texttt{regress()} 求参数与统计量
+    \item 绘制“散点图 + 回归直线”；
+    \item 根据模型预测：网站何时用户数达到 \textbf{10000}？
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{问题1-2结果展示}
+
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.75\textheight]{linear_prediction.png}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{问题1-3：附加题}
+  \small 观察数据发现：网站用户量的日内增长速度存在周期性。
+
+  \small \textbf{任务 3：引入多元变量建模}
+  \begin{itemize}\scriptsize
+    \item 构造两个自变量：
+      \begin{itemize}\scriptsize
+        \item \texttt{day\_index}：从起始日开始的第几天（0、1、2...）
+        \item \texttt{minute\_of\_day}：一天中的第几分钟（hour*60 + minute）
+      \end{itemize}
+
+    \item 构造模型：
+    $$number = \beta_0 + \beta_1 day + \beta_2 minute + \varepsilon$$
+
+    \item 若拟合效果不足，可尝试加入非线性项
+    \item 使用改进模型预测：网站何时用户数将达到 \textbf{10000}？
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{问题1-4：开放题}
+  \small \textbf{任务 4：}
+  
+  \small 基于你的分析与模型结果，请讨论：
+
+  \begin{itemize}\scriptsize
+    \item 你认为这个网站的主要功能可能是什么？（依据增长节奏）
+    \item 从数据趋势推测用户画像（年龄段、使用习惯等）；
+    \item 数据中的周期性说明了怎样的用户行为特征？
+    \item 如果你是该站站长的朋友，你会提出哪些运营建议？
+  \end{itemize}
+
+  \small 本题无标准答案，重在通过建模结果进行合理推断。
+\end{frame}
+
 
 \subsection{非线性规划}
 
