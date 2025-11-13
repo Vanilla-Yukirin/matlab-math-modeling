@@ -15,6 +15,11 @@ result=A2; % F(N)
 disp(result);
 toc
 
+
+%% 递归函数写法
+
+
+
 %% 另外一种方法 矩阵快速幂
 % 不要求掌握，感兴趣自学即可
 clc;clear;

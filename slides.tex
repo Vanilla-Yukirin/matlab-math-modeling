@@ -737,48 +737,123 @@ plot(y);               % 本质上是默认 x = 1:length(y)
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{plot(x, y)：绘制自变量与因变量}
+  更常用的绘图方式：指定 x 和 y。
 
+  \codeinfo{Section2_11_plot.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc;clear;close all;
+x = 0:0.1:2*pi;      % 自变量
+y = sin(x);          % 因变量
+plot(x, y);          % 绘制 y = sin(x)
   \end{lstlisting}
+
+  要点：
+  \begin{itemize}
+    \item x 与 y 必须长度一致；
+    \item x 可以是任意数值（时间、空间、数据点）；
+    \item 适合用来绘制函数曲线或实验数据。
+  \end{itemize}
+
 \end{frame}
 
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{图像标注：标题与坐标轴}
+  一张好的图要\textbf{能说明问题，展示数据的含义}。因此在图中，做好各处标注很重要。
 
+  \codeinfo{Section2_11_plot.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc;clear;close all;
+x = 0:0.1:2*pi;
+y = sin(x).^2;
+plot(x, y)
+title("y = sin(x)^2")    % 标题
+xlabel("x (rad)")      % x轴标签
+ylabel("y")            % y轴标签
+legend("sin(x)^2")       % 图例（说明线条含义）
   \end{lstlisting}
+
+  特别提醒一下，画图模块的字符串大多都是支持LaTeX的，比如可以用\texttt{\textbackslash sin(x)\textasciicircum 2}来表示数学公式。但是有时候也会触发奇怪的错误，导致标签显示不正常。
+
 \end{frame}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{图像窗口控制：figure}
+  \scriptsize Matlab 默认在同一个窗口中绘图，如果想创建新的图像窗口，需要使用 \texttt{figure}。
 
+
+  \codeinfo{Section2_11_plot.m}
   \begin{lstlisting}[style=matCN]
+clc;clear;close all;
+x = 0:0.1:2*pi;
 
+figure;          % 新建一个绘图窗口
+plot(x, sin(x))
+title("(*@\CN{这是第一张图}@*)")
 
+figure;          % 再打开一个新窗口
+plot(x, cos(x))
+title("(*@\CN{这是第二张图}@*)")
   \end{lstlisting}
+
+
 \end{frame}
 
-\begin{frame}[fragile]{}
-
+\begin{frame}[fragile]{在同一张图中绘制多条曲线}
+  \scriptsize 默认情况下，新的 plot 会覆盖旧图。可以使用 \texttt{hold on} 可以在同一张图中添加多条线。
+  
+  \codeinfo{Section2_11_plot.m}
   \begin{lstlisting}[style=matCN]
+clc;clear;close all;
+x = 0:0.1:2*pi;
 
+hold on          % 开始叠加
+plot(x, sin(x))
+plot(x, cos(x))
+hold off         % 结束叠加
 
+legend("sin(x)", "cos(x)")
   \end{lstlisting}
+
+  \scriptsize 在数模中常用于：
+  \begin{itemize}\scriptsize
+    \item 比较真实数据 vs 模型预测数据
+    \item 比较不同参数的模型结果
+    \item 展示多个方案的曲线
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{线型、颜色与标记控制}
+  美感也是论文追求的目标之一。Matlab 支持丰富的绘图样式，可用于论文美化。
 
+  \codeinfo{Section2_11_plot.m}
   \begin{lstlisting}[style=matCN]
+clc;clear;close all;
+x = 0:0.1:2*pi;
 
+plot(x, sin(x), 'r--', 'LineWidth', 1.5)   % 红色、虚线、加粗
+hold on
+plot(x, cos(x), 'b-o', 'MarkerSize', 4)    % 蓝色、圆点标记
+hold off
 
+legend("sin(x)", "cos(x)")
   \end{lstlisting}
-\end{frame}
+
+  \scriptsize plot函数有很多的样式控制方法，具体可以右键plot，打开关于plot函数的帮助，查看官方文档。常见样式参数：
+  \begin{itemize}\scriptsize
+    \item 颜色：'r'红, 'b'蓝, 'g'绿, 'k'黑…
+    \item 线型：'-'实线, '--'虚线, ':'点线
+    \item 标记：'o'圆点, '*'星, 's'方块
+  \end{itemize}
+
+  \end{frame}
+
+% \begin{frame}[fragile]{}
+
+%   \begin{lstlisting}[style=matCN]
 
 
+%   \end{lstlisting}
+% \end{frame}
 
 
 \section{Matlab简单应用} % 给两道题目
@@ -836,6 +911,8 @@ A(A<0) = 0
 
   其中，$N = 10^8$，$p = 10^9+7$
 
+  \textbf{可以尝试用“递推+for循环”和“递归函数”两种写法实现}
+
   \texttt{\scriptsize同时看看，你的程序需要多长时间计算出结果？}
   
 \end{frame}
@@ -867,11 +944,20 @@ toc
 \subsection{数值计算} % 方程求解+积分+微分
 
 \begin{frame}[fragile]{问题3}
+  \scriptsize下面给出一个函数：
 
-  \begin{lstlisting}[style=matCN]
+  $$ f(x) = x^2 e^{-x} $$
+  
+  请完成以下任务（每题都要求用\textbf{一行代码}完成）：
 
 
-  \end{lstlisting}
+  \begin{itemize}
+    \item (1) 求 $f(x)$ 的导数 $f'(x)$
+    \item (2) 计算定积分 $\int_0^3 f(x)\,dx$
+    \item (3) 在 $x = 2$ 处，求 $f(2)$ 的数值
+    \item (4) 用数值方法解方程 $f(x)=0.1$，求正根（提示：使用 \texttt{fzero}）
+  \end{itemize}
+
 \end{frame}
 
 \begin{frame}[fragile]{问题3答案}

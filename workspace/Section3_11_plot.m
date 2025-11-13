@@ -12,14 +12,27 @@ plot(x, y);          % 绘制 y = sin(x)
 %% 3. 添加标注
 clc;clear;close all;
 x = 0:0.1:2*pi;
-y = sin(x);
+y = sin(x).^2;
 plot(x, y)
-title("y = sin(x)")    % 标题
+title("y = sin(x)^2")    % 标题
 xlabel("x (rad)")      % x轴标签
 ylabel("y")            % y轴标签
-legend("sin(x)")       % 图例（说明线条含义）
+legend("sin(x)^2")       % 图例（说明线条含义）
 
-%% 4. 多条曲线
+%% 4. figure
+clc;clear;close all;
+x = 0:0.1:2*pi;
+
+figure;          % 新建一个绘图窗口
+plot(x, sin(x))
+title("这是第一张图")
+
+figure;          % 再打开一个新窗口
+plot(x, cos(x))
+title("这是第二张图")
+
+
+%% 5. 多条曲线
 clc;clear;close all;
 x = 0:0.1:2*pi;
 
@@ -30,7 +43,7 @@ hold off         % 结束叠加
 
 legend("sin(x)", "cos(x)")
 
-%% 5. 控制线条样式与颜色
+%% 6. 控制线条样式与颜色
 clc;clear;close all;
 x = 0:0.1:2*pi;
 
