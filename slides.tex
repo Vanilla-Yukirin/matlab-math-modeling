@@ -150,7 +150,8 @@
   
   如果下载速度过慢，可以带u盘下课找我拷贝
   
-  \textit{TODO: 安装Matlab过程截图}
+  安装方法：参考公众号安装教程
+  
 \end{frame}
 
 \section{Matlab的基础使用}
@@ -1191,9 +1192,7 @@ grid on;
 clc; clear;
 % 数据在这里忽略
 X = [ones(length(x1),1), x1, x2, x3];
-[b, bint, r, rint, stats] = regress(y, X);
-b
-stats
+[b, ~, ~, ~, stats] = regress(y, X)
   \end{lstlisting}
 \end{frame}
 
@@ -1208,6 +1207,13 @@ stats
     \item 拓展多元线性回归
   \end{itemize}
 
+  \tiny推荐自学：
+  \begin{itemize}
+    \item 线性回归求解本质：用矩阵除法也可以解决线性回归问题
+    \item 评估回归效果：$R^2$的含义、F检验、t检验、p值、置信区间、残差分析
+    \item 预测方式：点预测，区间预测
+    \item \texttt{stepwise} 逐步回归，\texttt{polyfit polyval} 多项式回归，\texttt{rstools} 多元二项式回归，\texttt{nlinfit} 非线性回归
+  \end{itemize}
   
 \end{frame}
 
@@ -1276,37 +1282,7 @@ stats
 今天晚上和周六周日，我会在数模5群里面看大家的问题
 
 大家可以把不懂的地方发到群里，我和数模协会的同学会尽量帮大家解答
+
 \end{frame}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% 新增：行内等宽（不需要 fragile）
-\begin{frame}{行内等宽：\texttt{...}}
-这里演示行内等宽：\texttt{for i = 1:n}，适合短的、简单的代码或变量名。
-\end{frame}
-
-% 新增：listings 的行内（颜色来自 lstset）
-\begin{frame}[fragile]{使用 \lstinline|...|}
-演示 listings 行内：\lstinline|disp('hello')|，适合需要 listings 语法高亮的短代码片段。
-\end{frame}
-
-% 新增：单行短代码块（verbatim）
-% \begin{frame}[fragile]{单行短代码块（verbatim）}
-% 单行或几行的简短代码可以用 verbatim 环境：
-% \begin{verbatim}
-% x = 1; y = x^2; disp(y)
-% \end{verbatim}
-% \end{frame}
 
 \end{document}
