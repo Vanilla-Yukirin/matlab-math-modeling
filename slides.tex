@@ -1010,20 +1010,205 @@ end
 
 \subsection{线性回归}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{引例}
+  \small 我们得到了一组数据。对于这16个样本，我们好奇：身高和腿长的关系是什么？
 
+{
+\scriptsize
+\centering
+\begin{tabular}{c|*{16}{c}}
+\textbf{身高} & 143 & 145 & 146 & 147 & 149 & 150 & 153 & 154 & 155 & 156 & 157 & 158 & 159 & 160 & 162 & 164 \\
+\hline
+\textbf{腿长} &  88 &  85 &  88 &  91 &  92 &  93 &  93 &  95 &  96 &  98 &  97 &  96 &  98 &  99 & 100 & 102 \\
+\end{tabular}
+}
+
+  \small 于是做出了散点图，发现“看上去像是一条线，但不完全是直线”
+
+  \small 能不能让电脑帮我们找一条最接近所有点的直线呢？
+
+  \codeinfo{Section4_1_example.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc; clear;
+x = [143 145 146 147 149 150 153 154 155 156 157 158 159 160 162 164];
+y = [ 88  85  88  91  92  93  93  95  96  98  97  96  98  99 100 102];
+figure;
+plot(x, y, 'bo', 'MarkerSize',6, 'LineWidth',1.5);
+grid on; % 打开背景的网格，看的更清楚
   \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{最接近所有数据点的直线}
+  \begin{figure}
+  \centering
+  \includegraphics[height=0.8\textheight]{S4_1_example.png}
+  \end{figure}
+\end{frame}
 
+
+\begin{frame}[fragile]{一元线性回归模型}
+  \small 观察散点图后，我们希望用一条“直线”去近似这种关系：
+
+  $$y = \beta_0 + \beta_1 x + \varepsilon$$
+
+  其中：
+  \begin{itemize}\scriptsize
+    \item $\beta_0$：截距（当身高为0时腿长的理论值，在本例中主要是数学意义）；
+    \item $\beta_1$：斜率，表示身高每增加1cm，腿长平均增加多少；
+    \item $\varepsilon$：误差项，表示“个体差异”“测量误差”等噪声。
+  \end{itemize}
+
+  \normalsize 一元线性回归的目标：\textbf{找到一组$\hat\beta_0,\hat\beta_1$，使得这条直线“尽可能贴近所有点”。}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{最小二乘}
+
+  \small 如何衡量“一条直线是否接近所有点”？
+
+  \small 对于第 $i$ 个样本，有真实值 $y_i$，预测值 $\hat y_i = \hat\beta_0 + \hat\beta_1 x_i$，它们之间的“差”称为\textbf{残差}：
+  $$
+    e_i = y_i - \hat y_i
+  $$
+
+  \small 最小二乘法（Least Squares）的思想：
+  $$
+    \text{选}~\hat\beta_0,\hat\beta_1 \text{使得}
+    \quad \sum_{i=1}^{n} e_i^2
+    = \sum_{i=1}^{n} (y_i - \hat\beta_0 - \hat\beta_1 x_i)^2
+    \quad \text{最小}.
+  $$
+  
+  \small 不做详细推导，只需要知道：\textbf{最小二乘法给出了一条“总体误差平方和最小”的直线}，这就是 Matlab 中 \texttt{regress} 命令所做的事。
+\end{frame}
+
+
+\begin{frame}[fragile]{regress命令}
+  \small 我们可以把一元线性回归写成矩阵形式：
+  $$
+    Y = X \beta,\quad
+    X = \begin{bmatrix}
+      1 & x_1 \\
+      1 & x_2 \\
+      \vdots & \vdots \\
+      1 & x_n
+    \end{bmatrix},\quad
+    \beta = \begin{bmatrix}\beta_0 \\ \beta_1\end{bmatrix}.
+  $$
+
+  \small 在 Matlab 中，只需几行代码就可以完成回归分析：
+
+  \codeinfo{Section4_2_regress.m}
   \begin{lstlisting}[style=matCN]
-
-
+[b, bint, r, rint, stats] = regress(y, X);
   \end{lstlisting}
+
+  \scriptsize 其中 \texttt{b} 给出 $\hat\beta_0,\hat\beta_1$ 的估计；\texttt{stats} 中包含拟合优度 $R^2$、F 值以及 p 值。
+\end{frame}
+
+\begin{frame}[fragile]{regress命令}
+  \small 在 Matlab 中，只需几行代码就可以完成回归分析：
+
+  \codeinfo{Section4_2_regress.m}
+  \begin{lstlisting}[style=matCN]
+% 显示结果
+fprintf("(*@\CN{截距}@*)beta0 = %.2f\n", b(1));
+fprintf("(*@\CN{自变量}@*)beta1 = %.2f\n", b(2));
+fprintf("(*@\CN{残差向量}@*) r\n"); disp(r);
+fprintf("(*@\CN{残差区间}@*) rint\n"); disp(rint); % 若区间跨过0，则该点可能为异常点。
+% 回归总体统计量 stats
+fprintf("R^2(*@\CN{（拟合优度）}@*)= %.4f\n", stats(1));
+fprintf("F (*@\CN{统计量}@*) = %.4f\n", stats(2));
+fprintf("p (*@\CN{值}@*) = %.4e\n", stats(3));
+  \end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{回归结果的解释}
+  \small 运行上一页的代码，得到的结果为：
+  $$
+    \hat\beta_0 \approx -16.07,\quad
+    \hat\beta_1 \approx 0.72,\quad
+    R^2 \approx 0.9282.
+  $$
+
+  \small 可以这样理解：
+  \begin{itemize}\scriptsize
+    \item \textbf{斜率 $\hat\beta_1 \approx 0.72$}：身高每增加 1cm，腿长平均增加约 0.7cm；
+    \item \textbf{截距 $\hat\beta_0 \approx -16$}：在本例中主要是数学量，不必过度解读其现实意义；
+    \item \textbf{$R^2 \approx 0.9282$}：说明直线解释了约 92.82\% 的 $y$ 变化，拟合效果非常好。
+  \end{itemize}
+
+  \small 此外，\texttt{bint} 给出回归系数的置信区间。\texttt{stats(3)} 中的 p 值若小于 0.05，说明“身高对腿长的线性影响”在统计上是显著的。
+\end{frame}
+
+
+\begin{frame}[fragile]{预测与拟合直线的绘制}
+  \small 得到回归系数后，就可以计算每个样本点的预测值 $\hat y = \hat\beta_0 + \hat\beta_1 x$，并画出拟合直线：
+  
+  \codeinfo{Section4_3_plot.m}
+  \begin{lstlisting}[style=matCN]
+clc; clear;
+x = [143 145 146 147 149 150 153 154 155 156 157 158 159 160 162 164]'; % 注意需要先转置，变成列向量
+y = [ 88  85  88  91  92  93  93  95  96  98  97  96  98  99 100 102]';
+X = [ones(length(x),1), x];
+b = regress(y, X);
+y_hat = X * b;  % 预测值
+figure;
+plot(x, y, 'k+', 'MarkerSize',6); hold on;  % 原始数据
+plot(x, y_hat, 'r-', 'LineWidth',1.5);      % 回归直线
+legend("(*@\CN{原始数据}@*)","(*@\CN{回归直线}@*)","Location","best");
+grid on;
+  \end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{预测与拟合直线的绘制}
+  \begin{figure}
+  \centering
+  \includegraphics[height=0.6\textheight]{S4_3_plot.png}
+  \end{figure}
+
+  \small 在建模与论文写作中，这种“散点 + 拟合直线”的图是非常常见的展示方式。
+\end{frame}
+
+
+\begin{frame}[fragile]{多元线性回归}
+  \small 刚才我们只考虑了一个自变量（身高）。如果有多个影响因素，例如：
+  \begin{itemize}\scriptsize
+    \item $x_1$：身高，$x_2$：体重，$x_3$：年龄
+  \end{itemize}
+  那么就得到\textbf{多元线性回归模型}：
+  $$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \varepsilon. $$
+  
+  \small 在 Matlab 中，只需要把 $X$ 矩阵 从两列扩展为多列，其余用法完全相同——调用 \texttt{regress} 命令即可得到结果。
+  
+  \codeinfo{Section4_4_multi.m}
+  \begin{lstlisting}[style=matCN]
+clc; clear;
+% 数据在这里忽略
+X = [ones(length(x1),1), x1, x2, x3];
+[b, bint, r, rint, stats] = regress(y, X);
+b
+stats
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{线性回归小结}
+  本节学习了：
+  \begin{itemize}\small
+    \item 一元线性回归模型的基本形式与含义
+    \item 最小二乘法思想
+    \item 如何使用 \texttt{regress} 命令完成回归分析
+    \item 解释回归结果并画出拟合直线
+    \item 拓展多元线性回归
+  \end{itemize}
+
+  
 \end{frame}
 
 \subsection{非线性规划模型与启发式算法求解}
@@ -1031,6 +1216,7 @@ end
 
 \begin{frame}[fragile]{}
 
+  \codeinfo{}
   \begin{lstlisting}[style=matCN]
 
 
@@ -1039,6 +1225,7 @@ end
 
 \begin{frame}[fragile]{}
 
+  \codeinfo{}
   \begin{lstlisting}[style=matCN]
 
 
@@ -1052,6 +1239,7 @@ end
 
 \begin{frame}[fragile]{}
 
+  \codeinfo{}
   \begin{lstlisting}[style=matCN]
 
 
@@ -1062,6 +1250,7 @@ end
 
 \begin{frame}[fragile]{}
 
+  \codeinfo{}
   \begin{lstlisting}[style=matCN]
 
 
