@@ -15,8 +15,8 @@ x = 0:0.1:2*pi;
 y = sin(x).^2;
 plot(x, y)
 title("y = sin(x)^2")    % 标题
-xlabel("x (rad)")      % x轴标签
-ylabel("y")            % y轴标签
+xlabel("x (rad)")        % x轴标签
+ylabel("y")              % y轴标签
 legend("sin(x)^2")       % 图例（说明线条含义）
 
 %% 4. figure

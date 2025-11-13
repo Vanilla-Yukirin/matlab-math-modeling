@@ -171,7 +171,7 @@
 \begin{frame}[fragile]{Matlab基本界面介绍}
   \begin{figure}
     \centering
-    \includegraphics[width=0.55\textwidth]{Matlab_main_detail.png}
+    \includegraphics[width=0.55\textwidth]{Matlab_main_detail2.png}
     \caption{Matlab R2024b 界面示例}
   \end{figure}
 \end{frame}
@@ -769,12 +769,12 @@ x = 0:0.1:2*pi;
 y = sin(x).^2;
 plot(x, y)
 title("y = sin(x)^2")    % 标题
-xlabel("x (rad)")      % x轴标签
-ylabel("y")            % y轴标签
+xlabel("x (rad)")        % x轴标签
+ylabel("y")              % y轴标签
 legend("sin(x)^2")       % 图例（说明线条含义）
   \end{lstlisting}
 
-  特别提醒一下，画图模块的字符串大多都是支持LaTeX的，比如可以用\texttt{\textbackslash sin(x)\textasciicircum 2}来表示数学公式。但是有时候也会触发奇怪的错误，导致标签显示不正常。
+  \scriptsize Tips: 画图模块的字符串大多都是支持上下标（\texttt{\textasciicircum}，\texttt{\_}）的，比如可以用\texttt{sin(x)\textasciicircum 2}来表示数学公式 $\sin(x)^2$。但这个特性有时候也会导致标签显示不正常。
 
 \end{frame}
 
@@ -923,21 +923,18 @@ A(A<0) = 0
 
   \codeinfo{Section3_2_fib.m}
   \begin{lstlisting}[style=matCN]
-clc;clear;
 % 计算斐波那契数列第N项模p的值
 N=40;
 p=10000;
 % 递推关系：F(i) = F(i-1) + F(i-2)
 tic
-A1 = 1; % F(1)，即前一项 -> 在迭代过程中代表F(i-1)
-A2 = 1; % F(2)，即当前项 -> 在迭代过程中代表F(i)
-for i=3:N % 然后这里只需要从第3项开始迭代，每次迭代生成第i项
-    t=A2; % 临时存储一下当前项A2，其在下一轮会变成前一项A1
-    A2=mod(A1+A2,p); % 递推出新的一项，并取模防止溢出
-    A1=t; % 将原来的当前项作为下一轮的前一项
+A=zeros(1,N); % 预先定义一个1*N的向量，用于存放答案
+A(1)=1;
+A(2)=1;
+for i=3:N % 这里只需要从第3项开始迭代，每次迭代生成第i项
+    A(i)=mod(A(i-1)+A(i-2),p); % 当前项等于前两项的和，并对p取模
 end
-result=A2; % F(N)
-disp(result);
+disp(A(N));
 toc
   \end{lstlisting}
 \end{frame}
@@ -1217,7 +1214,39 @@ X = [ones(length(x1),1), x1, x2, x3];
   
 \end{frame}
 
-\subsection{非线性规划模型与启发式算法求解}
+\subsection{非线性规划模型与求解}
+
+
+\begin{frame}[fragile]{什么是非线性规划}
+  \small 线性规划问题 = 规划问题 + 非线性的目标函数或约束。
+  
+  \scriptsize 在上一节初级班中，王学长已经讲过如何使用 lingo 求解线性规划问题。我也觉得对于简单的线性规划问题而言，lingo 是一个更好的选择。所以这节课就直接介绍非线性规划问题及其求解方法。
+  
+  \small 非线性规划问题在建模中大量出现（生产调度，最大利润/效率，路径规划……）
+
+  其基本形式如下：
+  \begin{align}
+  & \min f(x)\\
+  s.t.\ & g(x)\le0,h(x)=0
+  \end{align}
+
+  非线性规划问题的特征：
+\begin{itemize}\scriptsize
+  \item 求函数的极小值/极大值
+  \item 求函数在一定区域内的极值
+  \item 求函数在一定区域且满足特定条件下的极值
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{非线性规划问题简单例题}
+  
+  \codeinfo{}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
 
 
 \begin{frame}[fragile]{}
@@ -1228,6 +1257,47 @@ X = [ones(length(x1),1), x1, x2, x3];
 
   \end{lstlisting}
 \end{frame}
+
+
+\begin{frame}[fragile]{}
+
+  \codeinfo{}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{}
+
+  \codeinfo{}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{}
+
+  \codeinfo{}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{}
+
+  \codeinfo{}
+  \begin{lstlisting}[style=matCN]
+
+
+  \end{lstlisting}
+\end{frame}
+
 
 \begin{frame}[fragile]{}
 
@@ -1270,7 +1340,7 @@ X = [ones(length(x1),1), x1, x2, x3];
   \vspace{4pt}
   \small \textbf{任务 2：基于时间秒数的一元线性回归}
   \begin{itemize}\scriptsize
-    \item 将时间字段转换为“从 2025-11-04 00:00:00 起经过的总秒数”\texttt{t}
+    \item 将时间字段转换为“从 2025-11-04 00:00:00 起经过的总秒数” $t$
     \item 构造模型：$number = \beta_0 + \beta_1 \cdot t + \varepsilon$
     \item 使用 \texttt{regress()} 求参数与统计量
     \item 绘制“散点图 + 回归直线”；
