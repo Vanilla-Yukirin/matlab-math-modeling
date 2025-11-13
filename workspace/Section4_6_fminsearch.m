@@ -19,7 +19,7 @@ x0 = [0, 0]; % 选择初始点 x0
 Z = arrayfun(@(x,y) f([x,y]), X, Y); % arrayfun 的作用：对每个 (x,y) 调用一次 f([x,y])
 figure;
 surf(X, Y, Z, 'EdgeColor','none'); hold on; % EdgeColor='none' 去掉网格线，让表面更平滑
-plot3(x_min(1), x_min(2), fval, 'r.', 'MarkerSize',30); % 在三维图上用红点标出极小值点 (x_min(1), x_min(2), fval)
+plot3(x_min(1), x_min(2), fval, 'r.', 'MarkerSize',30); % 在三维图上用红点标出极小值点 $(x_min(1), x_min(2), fval)$
 % 美化图像
 title("fminsearch 寻找无约束极小值"); xlabel("x"); ylabel("y"); zlabel("f");
 colormap parula; % 设置配色。有很多自带的好看的配色 winter summer hot jet

@@ -16,7 +16,7 @@ f = @(x) x.^3 - 6*x.^2 + 4*x + 12; % 使用 .^ 是为了支持向量输入
 x = linspace(-2, 6, 400);          % 在 [-2,6] 上取 400 个点画曲线
 y = f(x);
 figure; plot(x, y, 'b-', 'LineWidth',1.5); hold on; % 画出函数曲线
-plot(x_min, fval, 'ro', 'MarkerSize',8, 'MarkerFaceColor','r'); % 在图上用红点标出极小值点 (x_min, fval)
+plot(x_min, fval, 'ro', 'MarkerSize',8, 'MarkerFaceColor','r'); % 在图上用红点标出极小值点 $(x_min, fval)$
 % 美化图像
 grid on;
 title("fminbnd 寻找一维极小值");

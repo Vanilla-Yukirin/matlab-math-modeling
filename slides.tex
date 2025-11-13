@@ -25,6 +25,9 @@
 \usepackage{graphicx}
 \graphicspath{{figs/}}  % 图片直接放到figs目录下
 
+% 绝对位置图片
+\usepackage[absolute,overlay]{textpos}
+
 % 题注字体大小
 \setbeamerfont{caption}{size=\scriptsize}      % 控制题注文字
 \setbeamerfont{caption name}{size=\scriptsize} % 控制“图 x:”这部分
@@ -63,8 +66,6 @@
 
 % \usepackage{listingsutf8}    % 支持 utf8
 \lstset{inputencoding=utf8}
-
-
 
 % 添加代码块标题
 \DeclareRobustCommand{\codeinfo}[1]{%
@@ -630,7 +631,7 @@ sum_val = sum(1:100);  % 1行代码 vs 5行循环
 
 \begin{frame}[fragile]{Matlab中的函数定义与调用}
   Matlab 支持很多形式：匿名函数（\texttt{f=@(x)x.\textasciicircum2}）、文件内多函数、嵌套函数、类方法……
-  但入门阶段只需要掌握\textbf{最常用的一种：单文件函数}。
+  我们先学习\textbf{最常用的一种：单文件函数}。
 
 
   \begin{figure}
@@ -691,6 +692,46 @@ end
   \small 函数适合：重复计算、逻辑封装、让脚本更清晰。
 
 \end{frame}
+
+\begin{frame}[fragile]{Matlab中的匿名函数}
+
+\small
+\textbf{匿名函数}是一行写完的小函数，不需要单独\texttt{.m} 文件，适合当作一些函数的\textbf{目标函数}进行传参。
+
+\vspace{1mm}
+\textbf{基本语法}
+\begin{lstlisting}[style=matCN]
+f = @(x) x.^2 + 3*x + 1;   % 定义 f(x)
+f(2)                       % 调用：f(2)
+\end{lstlisting}
+
+\vspace{1mm}
+\textbf{多变量匿名函数的两种常见写法}
+
+\scriptsize
+\begin{columns}[t]
+\column{0.48\textwidth}
+\textbf{(1) 多个参数：}
+\begin{lstlisting}[style=matCN]
+g = @(x, y) x.^2 + y.^2;
+g(3, 4)
+\end{lstlisting}
+
+\column{0.48\textwidth}
+\textbf{(2) 向量参数（优化常用）：}
+\begin{lstlisting}[style=matCN]
+h = @(v) (v(1)-2).^2 + (v(2)+1).^2;
+h([3, 4])
+best_v = fminsearch(h, [0, 0]);
+\end{lstlisting}
+\end{columns}
+
+\vspace{1mm}
+\small
+匿名函数非常简单：“匿名函数名 = \texttt{@(...)} 函数表达式”，写起来非常短，稍后我们会频繁的用到它。
+
+\end{frame}
+
 
 \begin{frame}[fragile]{符号运算}
   \scriptsize 符号运算：让 Matlab 像在纸上做\textbf{代数、微积分推导}，而不是只是计算小数结果。
@@ -772,13 +813,13 @@ clc;clear;close all;
 x = 0:0.1:2*pi;
 y = sin(x).^2;
 plot(x, y)
-title("y = sin(x)^2")    % 标题
+title("y = sin^2(x)")    % 标题
 xlabel("x (rad)")        % x轴标签
 ylabel("y")              % y轴标签
-legend("sin(x)^2")       % 图例（说明线条含义）
+legend("sin^2(x)")       % 图例（说明线条含义）
   \end{lstlisting}
 
-  \scriptsize Tips: 画图模块的字符串大多都是支持上下标（\texttt{\textasciicircum}，\texttt{\_}）的，比如可以用\texttt{sin(x)\textasciicircum 2}来表示数学公式 $\sin(x)^2$。但这个特性有时候也会导致标签显示不正常。
+  \scriptsize Tips: 画图模块的字符串大多都是支持上下标（\texttt{\textasciicircum}，\texttt{\_}）的，比如可以用\texttt{sin\textasciicircum 2(x)}来表示数学公式 $\sin^2(x)$。但这个特性有时候也会导致标签显示不正常。
 
 \end{frame}
 
@@ -1249,8 +1290,8 @@ $$
 
   \begin{figure}
   \centering
-  \includegraphics[height=0.40\textheight]{fminbnd_plot.png}
-  \caption{函数 $f(x)$ 在 $[-2,6]$ 区间的图像}
+  \includegraphics[height=0.55\textheight]{fminbnd_plot.png}
+  % \caption{函数 $f(x)$ 在 $[-2,6]$ 区间的图像}
   \end{figure}
 \end{frame}
 
@@ -1274,10 +1315,19 @@ $$
 
 \begin{frame}[fragile]{例1：fminbnd 求解代码}
 
-  \codeinfo{}
+  \codeinfo{Section4_5_fminbnd.m}
   \begin{lstlisting}[style=matCN]
-
-
+f = @(x) x.^3 - 6*x.^2 + 4*x + 12; % 使用 .\textasciicircum 是为了支持向量输入
+[x_min, fval] = fminbnd(f, -2, 6); % 调用 fminbnd 在给定区间[-2,6]内寻找极小值
+x = linspace(-2, 6, 400);          % 在 [-2,6] 上取 400 个点画曲线
+y = f(x);
+figure; plot(x, y, 'b-', 'LineWidth',1.5); hold on; % 画出函数曲线
+plot(x_min, fval, 'ro', 'MarkerSize',8, 'MarkerFaceColor','r'); % 在图上用红点标出极小值点
+% 美化图像
+grid on;
+title("fminbnd (*@\CN{寻找一维极小值}@*)");
+xlabel("x"); ylabel("f(x)");
+fprintf("best x = %.4f, f(x) = %.4f\n", x_min, fval);
   \end{lstlisting}
 \end{frame}
 
@@ -1285,8 +1335,8 @@ $$
 \begin{frame}[fragile]{例1：结果可视化}
 \begin{figure}
 \centering
-\includegraphics[height=0.65\textheight]{fminbnd_result.png}
-\caption{最优点标注于图中：$x^* = 3.6330$}
+\includegraphics[height=0.75\textheight]{fminbnd_result.png}
+% \caption{最优点标注于图中：$x^* = 3.6330$}
 \end{figure}
 \end{frame}
 
@@ -1311,7 +1361,7 @@ $$
 
 
 \begin{frame}[fragile]{例2：fminsearch 函数用法\footnote{\href{https://ww2.mathworks.cn/help/matlab/ref/fminsearch.html}{fminsearch - Matlab帮助中心}}}
-  非线性规划求解器 \texttt{fminsearch} 将使用使用无导数法搜索无约束的多变量函数的局部最小值。
+  非线性规划求解器 \texttt{fminsearch} 将使用无导数法搜索无约束的多变量函数的局部最小值。
 
   \begin{lstlisting}[style=matCN]
 [x_min, fval] = fminsearch(fun, x0)
@@ -1329,10 +1379,23 @@ $$
 
 \begin{frame}[fragile]{例2：fminsearch 求解代码}
 
-  \codeinfo{}
+  \codeinfo{Section4_6_fminsearch.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc; clear;
+% 定义目标函数 f(v)，其中 v 是长度为 2 的向量 v = [x, y]
+f = @(v) (v(1)-2).^2 + (v(2)+1).^2 + sin(v(1)*v(2)); % v(1) 对应 x，v(2) 对应 y
+x0 = [0, 0]; % 选择初始点 x0
+[x_min, fval] = fminsearch(f, x0);
+[X,Y] = meshgrid(linspace(-4,4,200), linspace(-4,4,200)); % 为了可视化三维曲面，我们生成一个网格 (X, Y)
+% 对网格上每个点计算 f(x,y)
+Z = arrayfun(@(x,y) f([x,y]), X, Y); % arrayfun 的作用：对每个 (x,y) 调用一次 f([x,y])
+figure;
+surf(X, Y, Z, 'EdgeColor','none'); hold on; % EdgeColor='none' 去掉网格线，让表面更平滑
+plot3(x_min(1), x_min(2), fval, 'r.', 'MarkerSize',30); % 在三维图上用红点标出极小值点
+% 美化图像
+title("fminsearch (*@\CN{寻找无约束极小值}@*)"); xlabel("x"); ylabel("y"); zlabel("f");
+colormap parula; % 设置配色。有很多自带的好看的配色 winter summer hot jet
+fprintf("best [x,y] = [%.4f, %.4f], f = %.4f\n", x_min(1), x_min(2), fval);
   \end{lstlisting}
 \end{frame}
 
@@ -1340,8 +1403,8 @@ $$
 \begin{frame}[fragile]{例2：结果可视化}
 \begin{figure}
 \centering
-\includegraphics[height=0.65\textheight]{fminsearch_result.png}
-\caption{最优点标注于三维图中}
+\includegraphics[height=0.75\textheight]{fminsearch_result.png}
+% \caption{最优点标注于三维图中}
 \end{figure}
 \end{frame}
 
@@ -1350,10 +1413,10 @@ $$
   \begin{columns}[T,totalwidth=\textwidth]
     \begin{column}{0.48\textwidth}
       \small 求该函数的极小值：
-      \begin{align}
-      &\min f(x,y) = x^2 + y^2 + 3\sin(x)\nonumber\\
-      s.t.\ &x^2+y^2\le4\nonumber
-      \end{align}
+      \begin{align*}
+      & \min_{x,y} && f(x,y) = x^2 + y^2 + 3\sin(x) \\
+      & \text{s.t.} && x^2 + y^2 \le 4
+      \end{align*}
     \end{column}
     \begin{column}{0.48\textwidth}
       \begin{figure}
@@ -1409,10 +1472,23 @@ $$
 
 \begin{frame}[fragile]{例3：fmincon 求解代码}
 
-  \codeinfo{}
+  \codeinfo{Section4_7_fmincon.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc;clear;
+f=@(v)v(1).^2+v(2).^2+3*sin(v(1));
+x0=[1,1];%给一个在可行域内的起点
+nonlcon=@(v)deal(v(1)^2+v(2)^2-4,[]);%非线性约束：圆
+%为什么需要deal(xxx,[])？匿名函数通常只返回一个结果，但fmincon约定nonlcon必须返回[c,ceq]
+%使用deal(输出1,输出2,...)强制匿名函数返回一个逗号分隔的输出列表
+[x_min,fval]=fmincon(f,x0,[],[],[],[],[],[],nonlcon);%线性约束A,b,Aeq,beq和变量上下界lb,ub都为空
+[x,y]=meshgrid(linspace(-3,3,200),linspace(-3,3,200));%在[-3,3]x[-3,3]区域上准备网格
+z=arrayfun(@(a,b)f([a,b]),x,y);
+figure;contourf(x,y,z,40);holdon;colormapparula;axisequal;%绘制目标函数的40条等高线
+theta=linspace(0,2*pi,200);plot(2*cos(theta),2*sin(theta),'k-','LineWidth',2);%画出约束边界
+plot(x_min(1),x_min(2),'ro','MarkerSize',10,'MarkerFaceColor','r');%在图上标出最优点
+title("fmincon (*@\CN{求解带圆形约束的非线性优化问题}@*)");
+xlabel("x");ylabel("y");
+fprintf("best[x,y]=[%.4f,%.4f],f=%.4f\n",x_min(1),x_min(2),fval);
   \end{lstlisting}
 \end{frame}
 
@@ -1420,20 +1496,20 @@ $$
 \begin{frame}[fragile]{例3：结果可视化}
 \begin{figure}
 \centering
-\includegraphics[height=0.65\textheight]{fmincon_result.png}
-\caption{最优点位于可行域内}
+\includegraphics[height=0.75\textheight]{fmincon_result.png}
+% \caption{最优点位于可行域内}
 \end{figure}
 \end{frame}
 
 
-\begin{frame}[fragile]{}
+% \begin{frame}[fragile]{}
 
-  \codeinfo{}
-  \begin{lstlisting}[style=matCN]
+%   \codeinfo{}
+%   \begin{lstlisting}[style=matCN]
 
 
-  \end{lstlisting}
-\end{frame}
+%   \end{lstlisting}
+% \end{frame}
 
 \begin{frame}[fragile]{非线性优化方法总结}
 \small
@@ -1460,21 +1536,29 @@ $$
 
 \subsection{分析某网站用户增长情况}
 
-\begin{frame}[fragile]{问题背景}
+\begin{frame}[fragile]{问题1描述}
+  % textblock* 参数: {width}(x_pos, y_pos)
+  % x_pos 和 y_pos 的单位默认是 cm。
+  % 0,0 是页面的左上角。你需要根据实际效果调整 x_pos 和 y_pos 来放置图片。
+  \begin{textblock*}{0.38\textwidth}(0.70\textwidth, 0.45\textheight) % 假设图片从页面60%宽度处开始，距离顶部15%高度
+    \centering
+    \includegraphics[height=0.30\textheight]{Web_logo.png}
+    % 在textblock里也可以放caption，但由于是绝对定位，caption会紧随图片
+  \end{textblock*}
+
+
   \scriptsize 你连续爬取了某网站的用户数量信息，记录了：
-
-  \texttt{year, month, day, hour, minute, second, number}。
-
-\scriptsize 数据时间跨度：2025-11-04 ~ 2025-11-13，共约 427 条记录。
 
   \codeinfo{homework1/data.csv}
   \begin{lstlisting}[style=matCN]
-2025,11,4,4,59,22,3825
-2025,11,4,5,20,47,3826
-2025,11,4,5,40,48,3827
+timestamp,year,month,day,hour,minute,second,number
+1762203562,2025,11,4,4,59,22,3825
+1762204847,2025,11,4,5,20,47,3826
+1762206048,2025,11,4,5,40,48,3827
 ...
+1763019325,2025,11,13,15,35,25,4596
   \end{lstlisting}
-
+ \scriptsize 数据时间跨度：2025-11-04 ~ 2025-11-13，共约 427 条记录。
 \end{frame}
 
 \begin{frame}[fragile]{问题1-1,1-2}
@@ -1510,12 +1594,13 @@ $$
     \item 构造两个自变量：
       \begin{itemize}\scriptsize
         \item \texttt{day\_index}：从起始日开始的第几天（0、1、2...）
-        \item \texttt{minute\_of\_day}：一天中的第几分钟（hour*60 + minute）
+        \item \texttt{minute\_of\_day}：一天中的第几分钟（$hour\times60 + minute$）
       \end{itemize}
 
     \item 构造模型：
     $$number = \beta_0 + \beta_1 day + \beta_2 minute + \varepsilon$$
 
+    \item 双变量回归模型的效果相比单变量模型是否提升
     \item 若拟合效果不足，可尝试加入非线性项
     \item 使用改进模型预测：网站何时用户数将达到 \textbf{10000}？
     \end{itemize}
@@ -1528,24 +1613,76 @@ $$
 
   \begin{itemize}\scriptsize
     \item 你认为这个网站的主要功能可能是什么？（依据增长节奏）
-    \item 从数据趋势推测用户画像（年龄段、使用习惯等）；
+    \item 从数据趋势推测用户画像（年龄段、使用习惯等）
     \item 数据中的周期性说明了怎样的用户行为特征？
-    \item 如果你是该站站长的朋友，你会提出哪些运营建议？
+    \item 如果你是该站站长的朋友，你会向他提出哪些运营建议？
   \end{itemize}
 
   \small 本题无标准答案，重在通过建模结果进行合理推断。
 \end{frame}
 
 
-\subsection{非线性规划}
+\subsection{服务器机房的能耗优化}
 
-\begin{frame}[fragile]{}
+\begin{frame}[fragile]{问题2描述}
 
-  \codeinfo{}
-  \begin{lstlisting}[style=matCN]
+  \scriptsize 冬天到了，作为 HatsuNova 项目组成员，你需要对机房服务器的散热系统进行参数调整。
+  
+  \scriptsize 既要保证散热效果，又要尽可能降低电力成本。
+  
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.25\textheight]{HatsuNova.png}
+  \end{figure}
+\end{frame}
 
 
-  \end{lstlisting}
+\begin{frame}[fragile]{问题2-1}
+
+  \small \textbf{任务 1：单变量优化}
+  
+假设服务器仅有一个主散热风扇。风扇转速 $x$（单位：千转/分）与系统的总能耗成本 $f(x)$ 满足以下经验公式：
+
+$$ f(x) = x^3 - 9x^2 + 24x + 30 $$
+
+其中，风扇转速的安全调节范围是 $x \in [0, 6]$。
+
+\begin{itemize}\scriptsize
+    \item 请分别尝试使用 \texttt{fminbnd}、\texttt{fminsearch} 和 \texttt{fmincon} 寻找使能耗最低的转速 $x$。
+    \item 思考它们的使用场景有何不同
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{问题2-2}
+  \small 为了应对高负载，机房升级了“风冷+水冷”混合系统。
+  
+  \small HatsuNova 的项目组成员遇到了新的难题：如何平衡噪音、震动、功耗和散热能力？
+
+  \small 变量 $x_1$：风冷风扇转速；\quad 变量 $x_2$：水冷水泵流速。
+  
+  \small 目标函数（总噪音与震动最小化）：
+
+$$ \min f(x_1, x_2) = (x_1 - 2)^2 + (x_2 - 2.5)^2 $$
+
+\end{frame}
+
+\begin{frame}[fragile]{问题2-2}
+  同时，还有一些约束条件：
+\begin{enumerate}\scriptsize
+    \item 功耗限制：风冷和水冷的总功耗不能超过 10 单位：
+    $$ 2x_1 + 3x_2 \le 10 $$
+    \item 散热能力：为了刚好压制 CPU 温度，两者的散热效率乘积必须严格等于 6：
+    $$ x_1 \cdot x_2 = 6 $$
+    \item 边界条件：$0 \le x_1 \le 5, \quad 0 \le x_2 \le 5$。
+\end{enumerate}
+
+  你的任务：
+  \begin{itemize}\scriptsize
+    \item 可视化目标函数与约束条件
+    \item 求解出满足约束条件的方案
+  \end{itemize}
 \end{frame}
 
 \section{总结与答疑}
@@ -1572,7 +1709,7 @@ $$
     \end{column}
     \begin{column}{0.48\textwidth}
 
-\small 希望大家在提问时，能够使问题易于回复：
+\small 希望大家在提问时，能够使问题易于回复
 
 \scriptsize 1. 能够使用清晰、正确、精准且合乎语法的语句描述问题和操作流程。
 
