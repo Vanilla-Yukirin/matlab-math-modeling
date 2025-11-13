@@ -1,0 +1,28 @@
+clc;clear;
+% 定义函数
+syms x
+f = x.^2 * exp(-x)
+%求 $f(x)$ 的导数 $f'(x)$
+df = diff(f)
+% 计算定积分 $\int_0^3 f(x)\,dx$
+int(f, x, 0, 3)
+% 在 $x = 2$ 处，求 $f(2)$ 的数值
+subs(f, x, 2)
+
+% 解方程 $f(x)=0.1$，求正根
+r1 = vpasolve(f == 0.1, x, 1);   % 从 1 附近找一个解
+r2 = fzero(@g, 1);               % 注意：g 里已经减掉 0.1
+fprintf("vpasolve优先符号运算r")
+%% 画图验证
+figure
+xx = 0:0.01:5;
+yy = xx.^2 .* exp(-xx);
+hold on
+plot(xx, yy)                     % 曲线 y = f(x)
+plot(xx, 0.1*ones(size(xx)))     % 水平线 y = 0.1
+plot(double(r1), double(subs(f,x,r1)), 'ro')  % r1 对应的交点
+hold off
+
+function y = g(x)
+    y = x.^2 .* exp(-x) - 0.1;
+end

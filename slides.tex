@@ -903,18 +903,19 @@ A(A<0) = 0
 \subsection{递推计算} % 斐波那契
 
 \begin{frame}[fragile]{问题2}
-  \textbf{计算斐波那契数列第N项模p的值}
+  \textbf{计算斐波那契数列第N项的最低4位数，即：}
 
-  $$F_n = F_{n-1} + F_{n-2} \mod p$$
+  $$F_0=0, F_1=1, F_n = F_{n-1} + F_{n-2}$$
   
   求 $F_N \mod p$
 
-  其中，$N = 10^8$，$p = 10^9+7$
+  其中，$N = 40$，$p = 10^4$
 
-  \textbf{可以尝试用“递推+for循环”和“递归函数”两种写法实现}
+  \textbf{Tips: 可以尝试用“递推+for循环”和“递归+函数”两种写法实现}
 
-  \texttt{\scriptsize同时看看，你的程序需要多长时间计算出结果？}
+  \texttt{\scriptsize如果$N=10^8$呢？如果$N=10^{18}$呢？同时看看，你的程序需要多长时间计算出结果？}
   
+  \scriptsize 推荐阅读：\href{https://oi-wiki.org/math/combinatorics/fibonacci/}{oi-wiki: 斐波那契数列}，\href{https://zhuanlan.zhihu.com/p/646539368}{zhihu: Pisano 周期}
 \end{frame}
 
 \begin{frame}[fragile]{问题2答案}
@@ -923,8 +924,8 @@ A(A<0) = 0
   \begin{lstlisting}[style=matCN]
 clc;clear;
 % 计算斐波那契数列第N项模p的值
-N=100000000;
-p=1000000007;
+N=40;
+p=10000;
 % 递推关系：F(i) = F(i-1) + F(i-2)
 tic
 A1 = 1; % F(1)，即前一项 -> 在迭代过程中代表F(i-1)
@@ -950,24 +951,55 @@ toc
   
   请完成以下任务（每题都要求用\textbf{一行代码}完成）：
 
-
   \begin{itemize}
     \item (1) 求 $f(x)$ 的导数 $f'(x)$
     \item (2) 计算定积分 $\int_0^3 f(x)\,dx$
     \item (3) 在 $x = 2$ 处，求 $f(2)$ 的数值
-    \item (4) 用数值方法解方程 $f(x)=0.1$，求正根（提示：使用 \texttt{fzero}）
+    \item (4) 解方程 $f(x)=0.1$，求正根（提示：使用 \texttt{vpasolve} 或 \texttt{fzero}）
+    \item (5) 画图验证(4)的正确性
   \end{itemize}
 
 \end{frame}
 
 \begin{frame}[fragile]{问题3答案}
 
+  \codeinfo{Section3_3_symb.m}
   \begin{lstlisting}[style=matCN]
-
-
+clc;clear;
+% 定义函数
+syms x
+f = x.^2 * exp(-x)
+%求 $f(x)$ 的导数 $f'(x)$
+df = diff(f)
+% 计算定积分 $\int_0^3 f(x)\,dx$
+int(f, x, 0, 3)
+% 在 $x = 2$ 处，求 $f(2)$ 的数值
+subs(f, x, 2)
   \end{lstlisting}
 \end{frame}
 
+\begin{frame}[fragile]{问题3答案}
+
+  \codeinfo{Section3_3_symb.m}
+  \begin{lstlisting}[style=matCN]
+% 解方程 $f(x)=0.1$，求正根
+format long
+r1 = vpasolve(f == 0.1, x, 1)   % 从 1 附近找一个解
+r2 = fzero(@g, 1)               % 注意：g 里已经减掉 0.1
+% 画图验证
+figure
+xx = 0:0.01:5;
+yy = xx.^2 .* exp(-xx);
+hold on
+plot(xx, yy)                     % 曲线 y = f(x)
+plot(xx, 0.1*ones(size(xx)))     % 水平线 y = 0.1
+plot(double(r1), double(subs(f,x,r1)), 'ro')  % r1 对应的交点
+hold off
+function y = g(x) % 函数也可以定义在文件的末尾
+    y = x.^2 .* exp(-x) - 0.1;
+end
+  \end{lstlisting}
+\end{frame}
 
 
 
