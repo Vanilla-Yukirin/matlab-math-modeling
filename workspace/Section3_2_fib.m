@@ -14,3 +14,30 @@ end
 result=A2; % F(N)
 disp(result);
 toc
+
+%% 另外一种方法 矩阵快速幂
+% 不要求掌握，感兴趣自学即可
+clc;clear;
+% 计算斐波那契数列第N项模p的值
+N=uint64(100000000);
+p=uint64(1000000007);
+tic
+A=uint64([1 1;1 0]);
+% A^n=[F(n+1) F(n); F(n) F(n-1)]
+result=uint64(eye(2)); % 单位矩阵
+n=N-1;
+mul_mod = @(X, Y) [ ...
+    mod(X(1,1)*Y(1,1) + X(1,2)*Y(2,1), p), mod(X(1,1)*Y(1,2) + X(1,2)*Y(2,2), p); ...
+    mod(X(2,1)*Y(1,1) + X(2,2)*Y(2,1), p), mod(X(2,1)*Y(1,2) + X(2,2)*Y(2,2), p) ...
+]; % 手动构建uint64的矩阵乘法
+% disp(uint64(1)/2) % 这玩意居然是四舍五入的:(
+while n>0
+    if mod(n,2)==1
+        result=mul_mod(result,A);
+    end
+    A=mul_mod(A,A);
+    % n=floor(n/2);
+    n=bitshift(n,-1);
+end
+disp(result(1,1));
+toc
