@@ -1,11 +1,11 @@
 %%展示
 clc;clear;
-f=@(v)v(1).^2+v(2).^2+3*sin(v(1));
+f=@(v) v(1).^2+v(2).^2+3*sin(v(1));
 %用等高线的方式展示目标函数
 [x,y]=meshgrid(linspace(-3,3,200),linspace(-3,3,200));
 z=arrayfun(@(a,b)f([a,b]),x,y);
 
-figure;contourf(x,y,z,40);holdon;colormapparula;axisequal;
+figure;contourf(x,y,z,40);hold on;colormap parula;axis equal;
 title("带约束的非线性目标函数");
 xlabel("x");ylabel("y");
 theta=linspace(0,2*pi,200);
@@ -21,7 +21,7 @@ nonlcon=@(v)deal(v(1)^2+v(2)^2-4,[]);%非线性约束：圆
 [x_min,fval]=fmincon(f,x0,[],[],[],[],[],[],nonlcon);%线性约束A,b,Aeq,beq和变量上下界lb,ub都为空
 [x,y]=meshgrid(linspace(-3,3,200),linspace(-3,3,200));%在[-3,3]x[-3,3]区域上准备网格
 z=arrayfun(@(a,b)f([a,b]),x,y);
-figure;contourf(x,y,z,40);holdon;colormapparula;axisequal;%绘制目标函数的40条等高线
+figure;contourf(x,y,z,40);hold on;colormap parula;axis equal;%绘制目标函数的40条等高线
 theta=linspace(0,2*pi,200);plot(2*cos(theta),2*sin(theta),'k-','LineWidth',2);%画出约束边界
 plot(x_min(1),x_min(2),'ro','MarkerSize',10,'MarkerFaceColor','r');%在图上标出最优点
 title("fmincon求解带圆形约束的非线性优化问题");

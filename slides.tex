@@ -112,7 +112,7 @@
 \textbf{Matlab}
 \begin{itemize}
   \item \textbf{内置}数学计算函数和工具箱、交互式工作区、工程领域标准。不需要会环境配置，安装好后开箱即用
-  \item 文档齐全，内置帮助文档（按F12即可查看函数详细用法），相比去问AI会更加精确且全面
+  \item 文档齐全，内置帮助文档（按F1即可查看函数详细用法），相比去问AI会更加精确且全面
   \item 付费软件，昂贵的授权费，每个工具箱还需要单独付费\footnote{其实我们学校之前是有订阅过的，但是嘛……}，很多学校没有资金订阅
 \end{itemize}
 
@@ -121,7 +121,7 @@
 \begin{itemize}
   \item 有numpy、sklearn、matplotlib等科学计算库、jupyter notebook交互式工作区，但是需要掌握环境管理/虚拟环境（anaconda、uv、venv等）
   \item 教程齐全。作为一门\textbf{热门语言}，网络上教程很多，问LLM也能得到不错的答案
-  \item 免费软件，免费、开源、社区活跃，每个人都能自由的使用（freeware）
+  \item 免费软件，免费、开源、社区活跃，每个人都能自由的使用（Free Software）
 \end{itemize}
 \end{columns}
 \end{frame}
@@ -550,7 +550,7 @@ C = A.^2     % [$1^2$ $2^2$; $3^2$ $4^2$] = [1 4; 9 16]
 % matrix(row,:)=[] ：删除第row行。
 % matrix(:,col) ：表示第col列的相关操作，和行一致。
 matrix=[1,2,3,4;5,6,7,8]
-[matrix(1) matrix(2) matrix(3)] % 发现单参数访问顺序是 1 5 2 6 3 7 5 8
+[matrix(1) matrix(2) matrix(3)] % 发现单参数访问顺序是 1 5 2 6 3 7
 matrix(2,4) % 第2行第4列
 matrix(1,:) % 第一行,所有列，即第一行一整行
 matrix(:,1) % 所有行,第一列，即第一列一整列
@@ -951,7 +951,7 @@ A(A<0) = 0
 \begin{frame}[fragile]{问题2}
   \textbf{计算斐波那契数列第N项的最低4位数，即：}
 
-  $$F_0=0, F_1=1, F_n = F_{n-1} + F_{n-2}$$
+  $$F_1=1, F_2=1, F_n = F_{n-1} + F_{n-2}$$
   
   求 $F_N \mod p$
 
@@ -998,7 +998,7 @@ toc
     \item (1) 求 $f(x)$ 的导数 $f'(x)$
     \item (2) 计算定积分 $\int_0^3 f(x)\,dx$
     \item (3) 在 $x = 2$ 处，求 $f(2)$ 的数值
-    \item (4) 解方程 $f(x)=0.1$，求正根（提示：使用 \texttt{vpasolve} 或 \texttt{fzero}）
+    \item (4) 解方程 $f(x)=0.1$，求在 $x\in(0,2)$ 范围内的根（提示：使用 \texttt{vpasolve} 或 \texttt{fzero}）
     \item (5) 画图验证(4)的正确性
   \end{itemize}
 
@@ -1025,7 +1025,7 @@ subs(f, x, 2)
 
   \codeinfo{Section3_3_symb.m}
   \begin{lstlisting}[style=matCN]
-% 解方程 $f(x)=0.1$，求正根
+% 解方程 $f(x)=0.1$，求在 $x\in(0,2)$ 范围内的根
 format long
 r1 = vpasolve(f == 0.1, x, 1)   % 从 1 附近找一个解
 r2 = fzero(@g, 1)               % 注意：g 里已经减掉 0.1
@@ -1263,7 +1263,7 @@ X = [ones(length(x1),1), x1, x2, x3];
 
 
 \begin{frame}[fragile]{什么是非线性规划\footnote{\tiny在上一节初级班中，王学长已经讲过如何使用 lingo 求解线性规划问题。我也觉得对于简单的线性规划问题而言，lingo 是一个更好的选择。所以这节课我就直接介绍非线性规划问题及其求解方法。}}
-  \small 线性规划问题 = 规划问题 + 非线性的目标函数或约束。
+  \small 非线性规划问题 = 规划问题 + 至少有一个非线性的目标函数或约束。
   
   % \texttt{}
   
@@ -1483,7 +1483,7 @@ nonlcon=@(v)deal(v(1)^2+v(2)^2-4,[]);%非线性约束：圆
 [x_min,fval]=fmincon(f,x0,[],[],[],[],[],[],nonlcon);%线性约束A,b,Aeq,beq和变量上下界lb,ub都为空
 [x,y]=meshgrid(linspace(-3,3,200),linspace(-3,3,200));%在[-3,3]x[-3,3]区域上准备网格
 z=arrayfun(@(a,b)f([a,b]),x,y);
-figure;contourf(x,y,z,40);holdon;colormapparula;axisequal;%绘制目标函数的40条等高线
+figure;contourf(x,y,z,40);hold on;colormap parula;axis equal;%绘制目标函数的40条等高线
 theta=linspace(0,2*pi,200);plot(2*cos(theta),2*sin(theta),'k-','LineWidth',2);%画出约束边界
 plot(x_min(1),x_min(2),'ro','MarkerSize',10,'MarkerFaceColor','r');%在图上标出最优点
 title("fmincon (*@\CN{求解带圆形约束的非线性优化问题}@*)");
@@ -1660,6 +1660,8 @@ $$ f(x) = x^3 - 9x^2 + 24x + 30 $$
   
   \small HatsuNova 的项目组成员遇到了新的难题：如何平衡噪音、震动、功耗和散热能力？
 
+  \small \textbf{任务 2：多变量非线性约束规划}
+
   \small 变量 $x_1$：风冷风扇转速；\quad 变量 $x_2$：水冷水泵流速。
   
   \small 目标函数（总噪音与震动最小化）：
@@ -1671,8 +1673,8 @@ $$ \min f(x_1, x_2) = (x_1 - 2)^2 + (x_2 - 2.5)^2 $$
 \begin{frame}[fragile]{问题2-2}
   同时，还有一些约束条件：
 \begin{enumerate}\scriptsize
-    \item 功耗限制：风冷和水冷的总功耗不能超过 10 单位：
-    $$ 2x_1 + 3x_2 \le 10 $$
+    \item 功耗限制：风冷和水冷的总功耗不能超过 12.5 单位：
+    $$ 2x_1 + 3x_2 \le 12.5 $$
     \item 散热能力：为了刚好压制 CPU 温度，两者的散热效率乘积必须严格等于 6：
     $$ x_1 \cdot x_2 = 6 $$
     \item 边界条件：$0 \le x_1 \le 5, \quad 0 \le x_2 \le 5$。
